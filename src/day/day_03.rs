@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 pub struct Day03;
 
-const INPUT: &'static str = include_str!("./input/day_03.txt");
+const INPUT: &'static str = include_str!("../input/day_03.txt");
 
 type Num = isize;
 

@@ -10,6 +10,7 @@ pub enum ErrorStatus {
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParamMode {
     Immediate,
+    Relative,
     Position,
 }
 
@@ -29,6 +30,7 @@ pub enum Op {
     JZ,
     LT,
     EQ,
+    SRB,
     GT,
     JumpA,
     JumpR,
@@ -47,9 +49,10 @@ impl Op {
             6 => Ok(Op::JZ),
             7 => Ok(Op::LT),
             8 => Ok(Op::EQ),
-            9 => Ok(Op::GT),
-            10 => Ok(Op::JumpA),
-            11 => Ok(Op::JumpR),
+            9 => Ok(Op::SRB),
+            10 => Ok(Op::GT),
+            11 => Ok(Op::JumpA),
+            12 => Ok(Op::JumpR),
             99 => Ok(Op::Halt),
             _ => Err(ErrorStatus::UnrecognizedOp(n)),
         }
@@ -61,33 +64,66 @@ impl Op {
         modes: &[ParamMode],
         machine: &mut IntCodeMachine,
     ) -> Result<usize, ErrorStatus> {
-        //fn get_param(n: usize) -> Result<Num, ErrorStatus> {
-        let get_param = |offset: usize| match modes[offset - 1] {
-            ParamMode::Immediate => machine
-                .memory
-                .get(machine.ip + offset)
-                .ok_or(ErrorStatus::OutOfBounds)
-                .map(|f| *f),
-            ParamMode::Position => {
-                let address = machine
+        //fn get_param(machine, modes, n: usize) -> Result<Num, ErrorStatus> {
+        fn get_param(machine: &IntCodeMachine, modes: &[ParamMode], offset: usize) -> Result<Num, ErrorStatus> {
+            match modes[offset - 1] {
+                ParamMode::Immediate => machine
                     .memory
                     .get(machine.ip + offset)
                     .ok_or(ErrorStatus::OutOfBounds)
-                    .map(|f| *f)
-                    .unwrap();
-                machine
-                    .memory
-                    .get(address as usize)
-                    .ok_or(ErrorStatus::OutOfBounds)
-                    .map(|f| *f)
+                    .map(|f| *f),
+                ParamMode::Position => {
+                    let address = machine
+                        .memory
+                        .get(machine.ip + offset)
+                        .ok_or(ErrorStatus::OutOfBounds)
+                        .map(|f| *f)
+                        .unwrap();
+                    machine
+                        .memory
+                        .get(address as usize)
+                        .ok_or(ErrorStatus::OutOfBounds)
+                        .map(|f| *f)
+                },
+                ParamMode::Relative => {
+                    let mut address = machine
+                        .memory
+                        .get(machine.ip + offset)
+                        .ok_or(ErrorStatus::OutOfBounds)
+                        .map(|f| *f)
+                        .unwrap();
+                    let mut target = machine.relative_base;
+
+                    if address < 0 {
+                        target -= address.abs() as usize;
+                    } else {
+                        target += address as usize;
+                    }
+
+                    machine
+                        .memory
+                        .get(target)
+                        .ok_or(ErrorStatus::OutOfBounds)
+                        .map(|f| *f)
+                }
             }
         };
 
-        let write_val = |m: &mut IntCodeMachine, pos: usize, val: Num| -> Result<(), ErrorStatus> {
-            let target = *m.memory.get(pos).ok_or(ErrorStatus::OutOfBounds)? as usize;
+        fn write_val(m: &mut IntCodeMachine, relative: bool, pos: usize, val: Num) -> Result<(), ErrorStatus> {
+            let address = *m.memory.get(pos).ok_or(ErrorStatus::OutOfBounds)?;
+            let mut target = m.relative_base;
+            if relative {
+                if address < 0 {
+                    target -= address.abs() as usize;
+                } else {
+                    target += address as usize;
+                }
+            } else {
+                target = address as usize;
+            }
             *m.memory.get_mut(target).ok_or(ErrorStatus::OutOfBounds)? = val;
             Ok(())
-        };
+        }
         fn to_num(b: bool) -> Num {
             match b {
                 true => 1,
@@ -96,18 +132,18 @@ impl Op {
         }
         match self {
             Op::Add => {
-                let p1 = get_param(1)?;
-                let p2 = get_param(2)?;
-                write_val(machine, machine.ip + 3, p1 + p2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let p2 = get_param(machine, modes, 2)?;
+                write_val(machine, modes[2] == ParamMode::Relative, machine.ip + 3, p1 + p2)?;
             }
             Op::Mul => {
-                let p1 = get_param(1)?;
-                let p2 = get_param(2)?;
-                write_val(machine, machine.ip + 3, p1 * p2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let p2 = get_param(machine, modes, 2)?;
+                write_val(machine, modes[2] == ParamMode::Relative, machine.ip + 3, p1 * p2)?;
             }
             Op::Input => {
-                if let Some(n) = machine.input_buffer.get(machine.input_pointer) {
-                    write_val(machine, machine.ip + 1, *n)?;
+                if let Some(n) = machine.input_buffer.get(machine.input_pointer).cloned() {
+                    write_val(machine, modes[0] == ParamMode::Relative, machine.ip + 1, n)?;
                     machine.input_pointer += 1;
                 } else {
                     machine.blocking = true;
@@ -118,11 +154,11 @@ impl Op {
                 }
             }
             Op::Output => {
-                machine.output_buffer.push(get_param(1)?);
+                machine.output_buffer.push(get_param(machine, modes, 1)?);
             }
             Op::JNZ => {
-                let p1 = get_param(1)?;
-                let target = get_param(2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let target = get_param(machine, modes, 2)?;
                 return if p1 != 0 {
                     machine.ip = target as usize;
                     // Tell the VM not to increment the IP before
@@ -135,8 +171,8 @@ impl Op {
                 };
             }
             Op::JZ => {
-                let p1 = get_param(1)?;
-                let target = get_param(2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let target = get_param(machine, modes, 2)?;
                 return if p1 == 0 {
                     machine.ip = target as usize;
                     // Tell the VM not to increment the IP before
@@ -149,26 +185,34 @@ impl Op {
                 };
             }
             Op::LT => {
-                let p1 = get_param(1)?;
-                let p2 = get_param(2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let p2 = get_param(machine, modes, 2)?;
 
-                write_val(machine, machine.ip + 3, to_num(p1 < p2))?;
+                write_val(machine, modes[2] == ParamMode::Relative, machine.ip + 3, to_num(p1 < p2))?;
             }
             Op::EQ => {
-                let p1 = get_param(1)?;
-                let p2 = get_param(2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let p2 = get_param(machine, modes, 2)?;
 
-                write_val(machine, machine.ip + 3, to_num(p1 == p2))?;
+                write_val(machine, modes[2] == ParamMode::Relative, machine.ip + 3, to_num(p1 == p2))?;
             }
+            Op::SRB => {
+                let p1 = get_param(machine, modes, 1)?;
+                if p1 < 0 {
+                    machine.relative_base -= p1.abs() as usize;
+                } else {
+                    machine.relative_base += p1 as usize;
+                }
+            },
             Op::GT => {
-                let p1 = get_param(1)?;
-                let p2 = get_param(2)?;
+                let p1 = get_param(machine, modes, 1)?;
+                let p2 = get_param(machine, modes, 2)?;
 
-                write_val(machine, machine.ip + 3, to_num(p1 > p2))?;
+                write_val(machine, modes[2] == ParamMode::Relative, machine.ip + 3, to_num(p1 > p2))?;
             }
             Op::JumpA => {
                 unimplemented!()
-                /*let p1 = get_param(1)?;
+                /*let p1 = get_param(machine, modes, 1)?;
                 let unsigned_p1 = p1.abs() as usize;
                 if unsigned_p1 < machine.memory.len() {
                     machine.ip = unsigned_p1;
@@ -183,7 +227,7 @@ impl Op {
                 // casting to a usize. We can't cast ip to isize or we
                 // lose any values past isize limit, so we have to
                 // do this, instead.
-                /*let p1 = get_param(1)?;
+                /*let p1 = get_param(machine, modes, 1)?;
                 let unsigned_p1 = p1.abs() as usize;
                 if p1 < 0 {
                     machine.ip -= unsigned_p1;
@@ -207,6 +251,7 @@ impl Op {
             Op::JZ => 3,
             Op::LT => 4,
             Op::EQ => 4,
+            Op::SRB => 2,
             Op::GT => 4,
             Op::JumpA => 2,
             Op::JumpR => 2,
@@ -230,6 +275,7 @@ pub struct IntCodeMachine {
     pub ip: usize,
     pub blocking: bool,
     pub halt: bool,
+    pub relative_base: usize,
 }
 
 impl IntCodeMachine {
@@ -242,6 +288,7 @@ impl IntCodeMachine {
             memory,
             blocking: false,
             halt: false,
+            relative_base: 0,
         }
     }
     pub fn execute(&mut self) -> Result<ExecutionStatus, ErrorStatus> {
@@ -261,7 +308,7 @@ impl IntCodeMachine {
                 *self.memory.get(self.ip).ok_or(ErrorStatus::OutOfBounds)?,
                 &mut modes,
             )?;
-            //println!("{:?}", op);
+            //println!("{:?} :: {} :: {:?}", op, self.relative_base, &self.memory[self.ip..(self.ip+op.len())]);
             params.clear();
             if op.len() > 1 {
                 for i in 0..(op.len() - 1) {
@@ -299,6 +346,8 @@ fn deconstruct_opcode(opcode: Num, modes: &mut Vec<ParamMode>) -> Result<Op, Err
     while o > 0 {
         if o % 10 == 1 {
             modes.push(ParamMode::Immediate);
+        } else if o % 10 == 2 {
+            modes.push(ParamMode::Relative);
         } else {
             modes.push(ParamMode::Position);
         }

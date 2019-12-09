@@ -3,6 +3,7 @@ name = "aoc_2019"
 version = "0.1.0"
 authors = ["Kenzie Jeanis <isavegas2006@gmail.com>"]
 edition = "2018"
+default-run = "aoc_2019"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,3 +11,5 @@ edition = "2018"
 maplit = "1.0.2"
 lazy_static = "1.4.0"
 permutohedron = "0.2.4"
+bytecount = { version = "0.6.0", features = ["runtime-dispatch-simd", "generic-simd"] }
+automod = "0.1.2"

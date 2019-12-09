@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 pub struct Day06;
 
-const INPUT: &'static str = include_str!("./input/day_06.txt");
+const INPUT: &'static str = include_str!("../input/day_06.txt");
 
 fn build_chain(
     target: &'static str,

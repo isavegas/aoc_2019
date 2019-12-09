@@ -3,7 +3,7 @@ use lazy_static::lazy_static;
 
 pub struct Day05;
 
-const INPUT: &'static str = include_str!("./input/day_05.txt");
+const INPUT: &'static str = include_str!("../input/day_05.txt");
 
 use crate::intcode::{parse_intcode, IntCodeMachine, Num};
 
