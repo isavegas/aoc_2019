@@ -106,9 +106,16 @@ impl Op {
                 write_val(machine, machine.ip + 3, p1 * p2)?;
             }
             Op::Input => {
-                let n = machine.input_buffer[machine.input_pointer];
-                write_val(machine, machine.ip + 3, n)?;
-                machine.input_pointer += 1;
+                if let Some(n) = machine.input_buffer.get(machine.input_pointer) {
+                    write_val(machine, machine.ip + 1, *n)?;
+                    machine.input_pointer += 1;
+                } else {
+                    machine.blocking = true;
+                    // inform the VM that we consumed nothing to
+                    // ensure we re-run this instruction when the
+                    // VM is unblocked
+                    return Ok(0);
+                }
             }
             Op::Output => {
                 machine.output_buffer.push(get_param(1)?);
@@ -118,8 +125,12 @@ impl Op {
                 let target = get_param(2)?;
                 return if p1 != 0 {
                     machine.ip = target as usize;
+                    // Tell the VM not to increment the IP before
+                    // executing, as we've changed IP ourselves.
                     Ok(0)
                 } else {
+                    // Don't change the IP. Tell the VM to go to the
+                    // next instruction.
                     Ok(self.len())
                 };
             }
@@ -128,8 +139,12 @@ impl Op {
                 let target = get_param(2)?;
                 return if p1 == 0 {
                     machine.ip = target as usize;
+                    // Tell the VM not to increment the IP before
+                    // executing, as we've changed IP ourselves.
                     Ok(0)
                 } else {
+                    // Don't change the IP. Tell the VM to go to the
+                    // next instruction.
                     Ok(self.len())
                 };
             }
@@ -201,12 +216,19 @@ impl Op {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum ExecutionStatus {
+    Blocking,
+    Halted,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct IntCodeMachine {
     pub memory: Vec<Num>,
     pub input_pointer: usize,
     pub input_buffer: Vec<Num>,
     pub output_buffer: Vec<Num>,
     pub ip: usize,
+    pub blocking: bool,
     pub halt: bool,
 }
 
@@ -218,12 +240,14 @@ impl IntCodeMachine {
             input_buffer,
             output_buffer: vec![],
             memory,
+            blocking: false,
             halt: false,
         }
     }
-    pub fn execute(&mut self) -> Result<(), ErrorStatus> {
+    pub fn execute(&mut self) -> Result<ExecutionStatus, ErrorStatus> {
         // Re-use `modes` rather than create a new one every
         // time in order to avoid memory thrashing.
+        self.blocking = false;
         let mut modes: Vec<ParamMode> = Vec::with_capacity(5);
         let mut params: Vec<Num> = vec![];
         //        println!("{:?}", self.memory);
@@ -237,6 +261,7 @@ impl IntCodeMachine {
                 *self.memory.get(self.ip).ok_or(ErrorStatus::OutOfBounds)?,
                 &mut modes,
             )?;
+            //println!("{:?}", op);
             params.clear();
             if op.len() > 1 {
                 for i in 0..(op.len() - 1) {
@@ -249,14 +274,13 @@ impl IntCodeMachine {
                 }
             }
             let cons = op.apply(&modes, self)?;
-            //            println!("{:04} :: {:?}, Modes: {:?}, Params: {:?}", cycle, op, modes, params);
-            //            println!("{:?}", &self.memory);
-            if self.halt {
-                //                println!("{:?}", self.memory);
-                //                println!("Finished");
-                break Ok(());
-            }
             self.ip += cons;
+            if self.halt {
+                break Ok(ExecutionStatus::Halted);
+            }
+            if self.blocking {
+                break Ok(ExecutionStatus::Blocking);
+            }
         }
     }
 }

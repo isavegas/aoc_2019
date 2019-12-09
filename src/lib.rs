@@ -7,7 +7,7 @@ pub trait AoCDay {
 mod error;
 pub use error::ErrorWrapper;
 
-mod intcode;
+pub mod intcode;
 
 mod day_01;
 mod day_02;
@@ -15,6 +15,7 @@ mod day_03;
 mod day_04;
 mod day_05;
 mod day_06;
+mod day_07;
 
 pub fn get_days() -> Vec<Box<dyn AoCDay>> {
     vec![
@@ -24,5 +25,6 @@ pub fn get_days() -> Vec<Box<dyn AoCDay>> {
         day_04::get_day(),
         day_05::get_day(),
         day_06::get_day(),
+        day_07::get_day(),
     ]
 }

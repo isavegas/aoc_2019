@@ -6,13 +6,6 @@ use std::io;
 // These are inspired by various third-party crate libs
 
 /// Exits a function early with an `Error`.
-///
-/// The `bail!` macro provides an easy way to exit a function. `bail!(X)` is
-/// equivalent to writing:
-///
-/// ```rust,ignore
-/// return Err(format_err!(X))
-/// ```
 #[macro_export]
 macro_rules! bail {
     ($e:expr) => {
