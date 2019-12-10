@@ -21,7 +21,7 @@ impl AoCDay for Day07 {
             .map(|params| {
                 let mut signal = 0;
                 for p in &params {
-                    let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![*p, signal]);
+                    let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![*p, signal], 100);
                     assert!(
                         machine.execute().expect("Machine crashed!") == ExecutionStatus::Halted,
                         "Machine blocking!"
@@ -39,7 +39,7 @@ impl AoCDay for Day07 {
     }
     fn part2(&self) -> String {
         fn new_machine(phase: Num) -> IntCodeMachine {
-            IntCodeMachine::new(INTCODE.clone(), vec![phase])
+            IntCodeMachine::new(INTCODE.clone(), vec![phase], 100)
         }
         Heap::new(&mut [5, 6, 7, 8, 9])
             .map(|params| {

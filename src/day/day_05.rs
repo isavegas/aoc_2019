@@ -17,7 +17,7 @@ impl AoCDay for Day05 {
         2
     }
     fn part1(&self) -> String {
-        let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![1]);
+        let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![1], 100);
         let err = machine.execute();
         if err.is_err() {
             println!("Error running machine! {:?}", err);
@@ -28,7 +28,7 @@ impl AoCDay for Day05 {
         )
     }
     fn part2(&self) -> String {
-        let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![5]);
+        let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![5], 100);
         let err = machine.execute();
         if err.is_err() {
             println!("Error running machine! {:?}", err);

@@ -7,6 +7,6 @@ pub trait AoCDay {
 mod error;
 pub use error::ErrorWrapper;
 
-pub mod intcode;
 mod day;
+pub mod intcode;
 pub use day::get_days;

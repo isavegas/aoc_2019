@@ -20,12 +20,12 @@ impl AoCDay for Day02 {
         let mut input = INTCODE.clone();
         input[1] = 12;
         input[2] = 2;
-        let mut machine = IntCodeMachine::new(input, vec![]);
+        let mut machine = IntCodeMachine::new(input, vec![], 100);
         let err = machine.execute();
         if err.is_err() {
             println!("Error running machine! {:?}", err);
         }
-        format!("{}", machine.memory[0])
+        format!("{}", machine.memory.read_raw(0).unwrap())
     }
     fn part2(&self) -> String {
         let input = INTCODE.clone();
@@ -36,9 +36,9 @@ impl AoCDay for Day02 {
             let mut i = input.clone();
             i[1] = first;
             i[2] = second;
-            let mut machine = IntCodeMachine::new(i, vec![]);
+            let mut machine = IntCodeMachine::new(i, vec![], 100);
             let r = machine.execute();
-            if r.is_ok() && machine.memory[0] == 19690720 {
+            if r.is_ok() && machine.memory.read_raw(0).unwrap() == 19690720 {
                 break format!("{}, {}", first, second);
             } else {
                 //println!("{}, {} => {}", first, second, machine.memory[0]);

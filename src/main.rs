@@ -33,6 +33,5 @@ pub fn main() {
             println!("Day {}, Part 2: {}", n, d.part2());
         }
     } else {
-        
     }
 }
