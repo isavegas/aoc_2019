@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::TryInto;
 
 pub type Num = isize;
 
@@ -14,6 +15,7 @@ fn to_num(b: bool) -> Num {
 pub enum ErrorStatus {
     UnterminatedProgram,
     UnrecognizedOp(Num),
+    IllegalMemoryAccess,
     OutOfBounds,
 }
 
@@ -223,10 +225,10 @@ impl Memory {
         (address / self.page_size, address % self.page_size)
     }
     #[inline(always)]
-    fn relative_address(&self, offset: Num) -> usize {
+    fn relative_address(&self, offset: Num) -> Result<usize, ErrorStatus> {
         match offset < 0 {
-            true => self.relative_base - offset.abs() as usize,
-            false => self.relative_base + offset as usize,
+            true => self.relative_base.checked_sub(offset.abs() as usize).ok_or_else(|| ErrorStatus::IllegalMemoryAccess),
+            false => (self.relative_base + offset as usize).try_into().map_err(|_| ErrorStatus::IllegalMemoryAccess),
         }
     }
     pub fn adjust_relative_base(&mut self, offset: Num) -> Result<(), ErrorStatus> {
@@ -237,9 +239,10 @@ impl Memory {
         }
         Ok(())
     }
-    // TODO: Add an out of memory error?
+    // TODO: Add an out of memory error? I doubt we'll ever have that issue,
+    // but perhaps we could add a declarable memory limit to the Memory struct?
     pub fn write_raw(&mut self, address: usize, value: Num) -> Result<(), ErrorStatus> {
-        // integer division
+        // Relies on integer division.
         let (page_index, page_offset) = self.resolve_virtual_address(address);
         if page_index > self.last_page {
             self.last_page = page_index;
@@ -262,13 +265,15 @@ impl Memory {
         // but the VM doesn't know or care about valid modes, as it simply propogates them to
         // the read/write functions.
         match mode {
-            ParamMode::Immediate | ParamMode::Position => self.write_raw(self.read_raw(address)? as usize, value),
-            ParamMode::Relative => self.write_raw(self.relative_address(self.read_raw(address)?), value),
-            /*ParamMode::Relative => {
-                let relative_offset = self.read_raw(address)?;
-                let address = self.relative_address(relative_offset);
-                self.write_raw(address, value)
-            }*/
+            ParamMode::Immediate | ParamMode::Position => self.write_raw(
+                self.read_raw(address)?
+                    .try_into()
+                    .map_err(|_| ErrorStatus::IllegalMemoryAccess)?,
+                value,
+            ),
+            ParamMode::Relative => {
+                self.write_raw(self.relative_address(self.read_raw(address)?)?, value)
+            }
         }
     }
     // We don't even bother allocating the memory page if it doesn't exist, as it will return 0 anyway.
@@ -277,24 +282,14 @@ impl Memory {
         let (page_index, page_offset) = self.resolve_virtual_address(address);
         match self.page_table.get(&page_index) {
             Some(page) => Ok(page[page_offset]),
-            None => {
-                //println!("Cache miss: {}", address);
-                Ok(0)
-            }
+            None => Ok(0),
         }
     }
     pub fn read(&self, address: usize, mode: ParamMode) -> Result<Num, ErrorStatus> {
         match mode {
             ParamMode::Immediate => self.read_raw(address),
-            ParamMode::Position => {
-                let a = self.read_raw(address)? as usize;
-                self.read_raw(a)
-            }
-            ParamMode::Relative => {
-                let relative_offset = self.read_raw(address)?;
-                let address = self.relative_address(relative_offset);
-                self.read_raw(address)
-            }
+            ParamMode::Position => self.read_raw(self.read_raw(address)?.try_into().map_err(|_| ErrorStatus::IllegalMemoryAccess)?),
+            ParamMode::Relative => self.read_raw(self.relative_address(self.read_raw(address)?)?),
         }
     }
     pub fn size(&self) -> usize {
@@ -303,7 +298,6 @@ impl Memory {
     // This seems inefficient if we hit it a lot
     pub fn virtual_size(&self) -> usize {
         (self.last_page + 1) * self.page_size
-        //(self.page_table.keys().max().unwrap_or_else(|| &0) + 1) * self.page_size
     }
     pub fn flatten(&self) -> Vec<Num> {
         let v_size = self.virtual_size();
@@ -327,7 +321,6 @@ pub struct IntCodeMachine {
     pub ip: usize,
     pub blocking: bool,
     pub halt: bool,
-    pub log_ops: bool,
     pub iteration: usize,
 }
 
@@ -341,20 +334,19 @@ impl IntCodeMachine {
             memory: Memory::from_vec(page_size, code),
             blocking: false,
             halt: false,
-            log_ops: false,
             iteration: 0,
         }
     }
     pub fn execute(&mut self) -> Result<ExecutionStatus, ErrorStatus> {
         // Re-use `modes` rather than create a new one every
         // time in order to avoid memory thrashing.
-        self.blocking = false;
         let mut modes: Vec<ParamMode> = Vec::with_capacity(5);
         let mut params: Vec<Num> = vec![];
 
+        self.blocking = false;
         loop {
             // There is no 0 opcode, so we can go ahead and
-            // assume that the program is going to crash
+            // report a crash.
             if self.ip >= self.memory.virtual_size() {
                 return Err(ErrorStatus::UnterminatedProgram);
             }
@@ -382,10 +374,10 @@ impl IntCodeMachine {
 
 // opcode is in format EDCBA where BA is 2 digit opcode, C is first
 // parameter mode, D is second, E is third, etc (flipped from AoC).
-// Note that currently we only support 0 for position and 1 for immediate.
+// Note that currently we support 0 for relative, 1 for immediate,
+// and 2 for relative mode.
 // We use bit masks currently to detect whether immediate mode is
 // active for a given parameter.
-// Potential TODO: support more modes and params.
 // DOES NOT CLEAR MODES. We do that explicitly up there ^ for separation of concerns
 fn deconstruct_opcode(opcode: Num, modes: &mut Vec<ParamMode>) -> Result<Op, ErrorStatus> {
     let op = opcode - ((opcode / 100) * 100);
@@ -403,7 +395,8 @@ fn deconstruct_opcode(opcode: Num, modes: &mut Vec<ParamMode>) -> Result<Op, Err
     }
 
     // ^ won't detect implicit leading zeros, so we push until we have minimum parameters.
-    // alternatively, I could refactor my apply() logic to handle missing parameter options
+    // alternatively, I could refactor my apply() logic to handle missing parameter options.
+    // Definitely a TODO, especially with zero cost abstractions.
     while modes.len() < 3 {
         modes.push(ParamMode::Position);
     }

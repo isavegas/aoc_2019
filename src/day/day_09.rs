@@ -11,25 +11,20 @@ impl AoCDay for Day09 {
         09
     }
     fn part1(&self) -> String {
-        let now = std::time::Instant::now();
-        let mut code = parse_intcode(INPUT).unwrap();
-        let mut machine = IntCodeMachine::new(code, vec![1], 2000);
-        machine.log_ops = true;
-        if let Err(e) = machine.execute() {
-            return format!("Machine crashed! {:?}", e);
-        } else {
-            println!("{:?}", now.elapsed().as_nanos());
-            format!("{:?}", machine.output_buffer)
+        let code = parse_intcode(INPUT).unwrap();
+        let mut machine = IntCodeMachine::new(code, vec![1], 200);
+        match machine.execute() {
+            Ok(_) => format!("{}", machine.output_buffer.pop().unwrap()),
+            Err(e) => format!("Machine crashed! {:?}", e),
         }
     }
     fn part2(&self) -> String {
-        let mut code = parse_intcode(INPUT).unwrap();
-            code.push(0);
-        let mut machine = IntCodeMachine::new(code, vec![2], 100);
-        if let Ok(s) = machine.execute() {
-            println!("{:?}", s);
+        let code = parse_intcode(INPUT).unwrap();
+        let mut machine = IntCodeMachine::new(code, vec![2], 2000);
+        match machine.execute() {
+            Ok(_) => format!("{}", machine.output_buffer.pop().unwrap()),
+            Err(e) => format!("Machine crashed! {:?}", e),
         }
-        format!("{:?}", machine.output_buffer)
     }
 }
 
