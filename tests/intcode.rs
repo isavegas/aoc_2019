@@ -17,7 +17,10 @@ mod instructions {
     #[test]
     fn add_position() {
         let (machine, result) = execute("1,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             6,
@@ -28,7 +31,10 @@ mod instructions {
     #[test]
     fn add_immediate() {
         let (machine, result) = execute("1101,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             10,
@@ -39,7 +45,10 @@ mod instructions {
     #[test]
     fn add_mixed() {
         let (machine, result) = execute("1001,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             8,
@@ -50,7 +59,10 @@ mod instructions {
     #[test]
     fn add_immediate_output_param() {
         let (machine, result) = execute("10001,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             6,
@@ -61,7 +73,10 @@ mod instructions {
     #[test]
     fn mul_position() {
         let (machine, result) = execute("2,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             9,
@@ -72,7 +87,10 @@ mod instructions {
     #[test]
     fn mul_immediate() {
         let (machine, result) = execute("1102,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             25,
@@ -83,7 +101,10 @@ mod instructions {
     #[test]
     fn mul_mixed() {
         let (machine, result) = execute("1002,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             15,
@@ -94,7 +115,10 @@ mod instructions {
     #[test]
     fn mul_immediate_output_param() {
         let (machine, result) = execute("10002,5,5,0,99,3");
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
             machine.memory.read_raw(0).unwrap(),
             9,
@@ -105,12 +129,12 @@ mod instructions {
     #[test]
     fn input() {
         let (machine, result) = run_code(parse_intcode("3,0,99").unwrap(), vec![4]);
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
-                machine
-                .memory
-                .read_raw(0)
-                .unwrap(),
+            machine.memory.read_raw(0).unwrap(),
             4,
             "Fails to get existing input data without blocking"
         )
@@ -119,12 +143,12 @@ mod instructions {
     #[test]
     fn input() {
         let (machine, result) = run_code(parse_intcode("3,0,99").unwrap(), vec![4]);
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
         assert_eq!(
-                machine
-                .memory
-                .read_raw(0)
-                .unwrap(),
+            machine.memory.read_raw(0).unwrap(),
             4,
             "Fails to get existing input data without blocking"
         )
@@ -132,19 +156,30 @@ mod instructions {
     #[test]
     fn output() {
         let (machine, result) = run_code(parse_intcode("4,0,99").unwrap(), vec![]);
-        assert!(result.is_ok(), format!("Crashed! {:?}", result.unwrap_err()));
-        assert_eq!(machine.output_buffer.get(0),Some(&4_isize),"Fails to get existing input data without blocking");
+        assert!(
+            result.is_ok(),
+            format!("Crashed! {:?}", result.unwrap_err())
+        );
+        assert_eq!(
+            machine.output_buffer.get(0),
+            Some(&4_isize),
+            "Fails to get existing input data without blocking"
+        );
     }
 }
 
 mod memory {
-    use aoc_2019::intcode::{ Memory, ParamMode };
+    use aoc_2019::intcode::{Memory, ParamMode};
     #[test]
     fn from_vec() {
         let mem = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         let mut mem_out = mem.clone();
         mem_out.resize_with(12, || 0);
-        assert_eq!(Memory::from_vec(2, mem.clone()).flatten(), mem_out, "Doesn't map a vector to pages correctly");
+        assert_eq!(
+            Memory::from_vec(2, mem.clone()).flatten(),
+            mem_out,
+            "Doesn't map a vector to pages correctly"
+        );
     }
     #[test]
     fn read_raw() {
@@ -160,13 +195,21 @@ mod memory {
     #[test]
     fn read_position() {
         let mem = Memory::from_vec(10, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        assert_eq!(mem.read(0, ParamMode::Position), Ok(2), "Fails to write to memory");
+        assert_eq!(
+            mem.read(0, ParamMode::Position),
+            Ok(2),
+            "Fails to write to memory"
+        );
     }
     #[test]
     fn read_relative() {
         let mut mem = Memory::from_vec(10, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
         mem.relative_base = 1;
-        assert_eq!(mem.read(1, ParamMode::Relative), Ok(4), "Fails to write to memory");
+        assert_eq!(
+            mem.read(1, ParamMode::Relative),
+            Ok(4),
+            "Fails to write to memory"
+        );
     }
     #[test]
     fn write_position() {

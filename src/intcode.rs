@@ -69,20 +69,16 @@ impl Op {
         machine: &mut IntCodeMachine,
     ) -> Result<usize, ErrorStatus> {
         macro_rules! mem_write {
-            ($offset:expr, $value:expr) => (
-                {
-                    let o = $offset;
-                    machine.memory.write(machine.ip + o, $value, modes[o - 1])
-                }
-            )
+            ($offset:expr, $value:expr) => {{
+                let o = $offset;
+                machine.memory.write(machine.ip + o, $value, modes[o - 1])
+            }};
         }
         macro_rules! mem_read {
-            ($offset:expr) => (
-                {
-                    let o = $offset;
-                    machine.memory.read(machine.ip + o, modes[o - 1])
-                }
-            )
+            ($offset:expr) => {{
+                let o = $offset;
+                machine.memory.read(machine.ip + o, modes[o - 1])
+            }};
         }
         let mut params_f = vec![];
         for n in 1..self.len() {
@@ -121,10 +117,10 @@ impl Op {
                     true => {
                         machine.ip = target as usize;
                         return Ok(0);
-                    },
+                    }
                     false => {
                         return Ok(self.len());
-                    },
+                    }
                 }
             }
             Op::JZ => {
@@ -134,10 +130,10 @@ impl Op {
                     true => {
                         machine.ip = target as usize;
                         return Ok(0);
-                    },
+                    }
                     false => {
                         return Ok(self.len());
-                    },
+                    }
                 }
             }
             Op::LT => {
@@ -152,7 +148,7 @@ impl Op {
             }
             Op::ARB => {
                 let p1 = mem_read!(1)?;
-                machine.memory.adjust_relative_base(p1);
+                machine.memory.adjust_relative_base(p1)?;
             }
             Op::Halt => machine.halt = true,
         }
@@ -234,11 +230,11 @@ impl Memory {
         }
     }
     pub fn adjust_relative_base(&mut self, offset: Num) -> Result<(), ErrorStatus> {
-                if offset < 0 {
-                    self.relative_base -= offset.abs() as usize;
-                } else {
-                    self.relative_base += offset as usize;
-                }
+        if offset < 0 {
+            self.relative_base -= offset.abs() as usize;
+        } else {
+            self.relative_base += offset as usize;
+        }
         Ok(())
     }
     // TODO: Add an out of memory error?
@@ -248,7 +244,7 @@ impl Memory {
         if page_index > self.last_page {
             self.last_page = page_index;
         }
-        let mut page = self
+        let page = self
             .page_table
             .entry(address / self.page_size)
             .or_insert(vec![0; self.page_size]);
@@ -267,11 +263,12 @@ impl Memory {
         // the read/write functions.
         match mode {
             ParamMode::Immediate | ParamMode::Position => self.write_raw(self.read_raw(address)? as usize, value),
-            ParamMode::Relative => {
+            ParamMode::Relative => self.write_raw(self.relative_address(self.read_raw(address)?), value),
+            /*ParamMode::Relative => {
                 let relative_offset = self.read_raw(address)?;
                 let address = self.relative_address(relative_offset);
                 self.write_raw(address, value)
-            }
+            }*/
         }
     }
     // We don't even bother allocating the memory page if it doesn't exist, as it will return 0 anyway.
@@ -283,7 +280,7 @@ impl Memory {
             None => {
                 //println!("Cache miss: {}", address);
                 Ok(0)
-            },
+            }
         }
     }
     pub fn read(&self, address: usize, mode: ParamMode) -> Result<Num, ErrorStatus> {
@@ -292,12 +289,12 @@ impl Memory {
             ParamMode::Position => {
                 let a = self.read_raw(address)? as usize;
                 self.read_raw(a)
-            },
+            }
             ParamMode::Relative => {
                 let relative_offset = self.read_raw(address)?;
                 let address = self.relative_address(relative_offset);
                 self.read_raw(address)
-            },
+            }
         }
     }
     pub fn size(&self) -> usize {
