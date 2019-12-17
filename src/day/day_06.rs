@@ -18,7 +18,7 @@ fn build_chain(
 }
 
 impl AoCDay for Day06 {
-    fn day(&self) -> i32 {
+    fn day(&self) -> usize {
         06
     }
     fn part1(&self) -> String {

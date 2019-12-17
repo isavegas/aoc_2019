@@ -227,8 +227,13 @@ impl Memory {
     #[inline(always)]
     fn relative_address(&self, offset: Num) -> Result<usize, ErrorStatus> {
         match offset < 0 {
-            true => self.relative_base.checked_sub(offset.abs() as usize).ok_or_else(|| ErrorStatus::IllegalMemoryAccess),
-            false => (self.relative_base + offset as usize).try_into().map_err(|_| ErrorStatus::IllegalMemoryAccess),
+            true => self
+                .relative_base
+                .checked_sub(offset.abs() as usize)
+                .ok_or_else(|| ErrorStatus::IllegalMemoryAccess),
+            false => (self.relative_base + offset as usize)
+                .try_into()
+                .map_err(|_| ErrorStatus::IllegalMemoryAccess),
         }
     }
     pub fn adjust_relative_base(&mut self, offset: Num) -> Result<(), ErrorStatus> {
@@ -288,7 +293,11 @@ impl Memory {
     pub fn read(&self, address: usize, mode: ParamMode) -> Result<Num, ErrorStatus> {
         match mode {
             ParamMode::Immediate => self.read_raw(address),
-            ParamMode::Position => self.read_raw(self.read_raw(address)?.try_into().map_err(|_| ErrorStatus::IllegalMemoryAccess)?),
+            ParamMode::Position => self.read_raw(
+                self.read_raw(address)?
+                    .try_into()
+                    .map_err(|_| ErrorStatus::IllegalMemoryAccess)?,
+            ),
             ParamMode::Relative => self.read_raw(self.relative_address(self.read_raw(address)?)?),
         }
     }

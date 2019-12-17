@@ -7,7 +7,7 @@ use crate::intcode::{parse_intcode, IntCodeMachine};
 const INPUT: &'static str = include_str!("../input/day_09.txt");
 
 impl AoCDay for Day09 {
-    fn day(&self) -> i32 {
+    fn day(&self) -> usize {
         09
     }
     fn part1(&self) -> String {

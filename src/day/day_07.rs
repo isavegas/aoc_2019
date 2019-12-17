@@ -13,7 +13,7 @@ lazy_static! {
 }
 
 impl AoCDay for Day07 {
-    fn day(&self) -> i32 {
+    fn day(&self) -> usize {
         07
     }
     fn part1(&self) -> String {

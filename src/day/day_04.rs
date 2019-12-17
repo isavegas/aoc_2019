@@ -60,7 +60,7 @@ struct NumStr {
 }
 
 impl AoCDay for Day04 {
-    fn day(&self) -> i32 {
+    fn day(&self) -> usize {
         04
     }
     fn part1(&self) -> String {

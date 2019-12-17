@@ -1,10 +1,12 @@
 use crate::AoCDay;
 
-pub struct Day1;
+pub struct Day13;
 
-impl AoCDay for Day1 {
+const INPUT: &'static str = include_str!("../input/day_13.txt");
+
+impl AoCDay for Day13 {
     fn day(&self) -> usize {
-        1
+        13
     }
     fn part1(&self) -> String {
         unimplemented!()
@@ -15,5 +17,5 @@ impl AoCDay for Day1 {
 }
 
 pub fn get_day() -> Box<dyn AoCDay> {
-    Box::new(Day1)
+    Box::new(Day13)
 }

@@ -20,7 +20,10 @@ pub fn main() {
     let days = aoc_2019::get_days();
 
     if let Some(s) = selected_day {
-        let d = days.get(s - 1).expect("Selected day not found");
+        let d = days
+            .iter()
+            .find(|d| d.day() == s)
+            .expect("Selected day not found");
         let n = format!("{:02}", d.day());
         if let Some(p) = selected_part {
             match p {

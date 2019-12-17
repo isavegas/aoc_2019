@@ -73,7 +73,7 @@ fn manhattan_distance(p1: &Point, p2: &Point) -> Num {
 }
 
 impl AoCDay for Day03 {
-    fn day(&self) -> i32 {
+    fn day(&self) -> usize {
         03
     }
     fn part1(&self) -> String {

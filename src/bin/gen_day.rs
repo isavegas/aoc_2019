@@ -4,10 +4,10 @@ macro_rules! template {
 
 pub struct Day{0};
 
-const INPUT: &'static str = include_str!("./input/day_{0}.txt");
+const INPUT: &'static str = include_str!("../input/day_{0}.txt");
 
 impl AoCDay for Day{0} {{
-    fn day(&self) -> i32 {{
+    fn day(&self) -> usize {{
         {0}
     }}
     fn part1(&self) -> String {{
@@ -39,6 +39,11 @@ pub fn main() {
                 concat!(env!("CARGO_MANIFEST_DIR"), "/src/day"),
                 num_str
             );
+            let input_path = format!(
+                "{}/day_{}.txt",
+                concat!(env!("CARGO_MANIFEST_DIR"), "/src/input"),
+                num_str
+            );
             let mut f = BufWriter::new(
                 OpenOptions::new()
                     .create_new(true)
@@ -48,6 +53,12 @@ pub fn main() {
             );
             write!(f, template!(), num_str).expect("Unable to write file");
             println!("Output file created at {}", day_path);
+            OpenOptions::new()
+                .create_new(true)
+                .write(true)
+                .open(input_path.clone())
+                .expect("Unable to create input file");
+            println!("Input file created at {}", input_path);
         }
     }
 }
