@@ -34,6 +34,13 @@ impl<T: Default> Default for Vec3<T> {
     }
 }
 
+use std::fmt::Display;
+impl<T: Display> Display for Vec3<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
 impl<T: Add<Output = T>> Add for Vec3<T> {
     type Output = Self;
     fn add(self, o: Self) -> Self::Output {

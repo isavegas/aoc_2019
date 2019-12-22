@@ -1,7 +1,7 @@
+#![allow(unused_variables)] 
+#![allow(unused_imports)] 
 use crate::AoCDay;
 use lazy_static::lazy_static;
-use std::collections::HashMap;
-use std::hash::Hasher;
 
 pub struct Day10;
 

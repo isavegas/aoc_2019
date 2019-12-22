@@ -1,5 +1,5 @@
 use crate::AoCDay;
-use crate::intcode::{ IntCodeMachine, ExecutionStatus, ErrorStatus, Num, parse_intcode };
+use crate::intcode::{ IntCodeMachine, ExecutionStatus, Num, parse_intcode };
 use lazy_static::lazy_static;
 
 pub struct Day13;
