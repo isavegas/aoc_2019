@@ -74,6 +74,41 @@ enum Tile {
     Wall,
     Empty,
     Oxygen,
+    Unknown,
+}
+
+impl Default for Tile {
+    fn default() -> Tile {
+        Tile::Unknown
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Default)]
+struct Chunk {
+    data: [[Tile; 32]; 32]
+}
+
+#[derive(Clone, Debug)]
+struct Map<'a> {
+    pub size: Point,
+    pub current: &'a Chunk,
+    pub chunks: HashMap<Point, Chunk>,
+}
+impl<'a> Map<'_> {
+    fn new() -> Map<'a> {
+/*
+        let mut chunks = HashMap::new();
+        Map {
+            size: Point::new(32, 32),
+            current: chunks.entry(Point::default()).or_default(),
+            chunks,
+        }
+*/
+        unimplemented!()
+    }
+    /*fn chunk(&mut self, p: &Point) {
+        self.current = self.chunks.entry(p % &self.size).or_default();
+    }*/
 }
 
 impl AoCDay for Day15 {

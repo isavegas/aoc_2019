@@ -6,7 +6,7 @@ pub struct Day14;
 
 const INPUT: &'static str = include_str!("../input/day_14.txt");
 
-type ID = u8;
+type ID = u16;
 
 const ORE_ID: ID = 0;
 const FUEL_ID: ID = 1;

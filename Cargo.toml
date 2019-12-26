@@ -13,8 +13,6 @@ lazy_static = "1.4.0"
 permutohedron = "0.2.4"
 bytecount = { version = "0.6.0", features = ["runtime-dispatch-simd", "generic-simd"] }
 automod = "0.1.2"
-gnuplot = "0.0.32"
-plotlib = "0.4.0"
 num = "0.2.0"
 
 [dev-dependencies]

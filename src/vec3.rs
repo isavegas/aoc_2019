@@ -1,5 +1,5 @@
 use std::hash::{Hash, Hasher};
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Rem};
 
 #[derive(Clone, PartialEq, Debug, Copy)]
 pub struct Vec3<T> {
@@ -38,6 +38,17 @@ use std::fmt::Display;
 impl<T: Display> Display for Vec3<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
+impl<T: Rem<Output = T>> Rem for Vec3<T> {
+    type Output = Self;
+    fn rem(self, o: Self) -> Self::Output {
+        Self {
+            x: self.x % o.x,
+            y: self.y % o.y,
+            z: self.z % o.z,
+        }
     }
 }
 
