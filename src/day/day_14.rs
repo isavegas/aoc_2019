@@ -11,7 +11,6 @@ type ID = u16;
 const ORE_ID: ID = 0;
 const FUEL_ID: ID = 1;
 
-// HashMap<component: &str, Vec<(output_count: usize, requirements: Vec<(amount: usize, component: &str)>>
 type BackMap = HashMap<ID, Vec<(usize, Vec<(usize, ID)>)>>;
 lazy_static! {
     static ref REACTIONS: BackMap = {
@@ -55,10 +54,6 @@ fn cost(component: ID, amount: usize, mut store: HashMap<ID, usize>) -> (usize, 
     if adj_amount == 0 { return (0, store); }
     let reactions = REACTIONS.get(&component).unwrap();
 
-/*    fn react((usize, Vec<(u8, usize)>)) {
-        
-    } */
-
     if reactions.len() == 1 {
         let (output, requirements) = &reactions[0];
         let mut batches = adj_amount / output;
@@ -98,10 +93,7 @@ impl AoCDay for Day14 {
         14
     }
     fn part1(&self) -> String {
-        let out = cost(FUEL_ID, 1, HashMap::new());
-        println!("cost calls: {}", out.1.get(&254).unwrap_or(&0));
-        println!("Forks: {}", out.1.get(&255).unwrap_or(&0));
-        format!("{}", out.0)
+        format!("{}", cost(FUEL_ID, 1, HashMap::new()).0)
     }
     fn part2(&self) -> String {
         let mut ore_count = 1_000_000_000_000;

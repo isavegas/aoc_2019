@@ -4,7 +4,7 @@ use crate::intcode::{ IntCodeMachine, parse_intcode, ExecutionStatus, Num };
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 
-type Point = Vec2<i32>;
+type Point = Vec2<Num>;
 
 pub struct Day15;
 
@@ -15,7 +15,7 @@ lazy_static! {
 }
 
 #[derive(Clone, Debug)]
-enum Direction {
+pub enum Direction {
     North,
     South,
     East,
@@ -50,12 +50,21 @@ impl Direction {
             Direction::West => Direction::North,
         }
     }
+    fn rotate_rev(&self) -> Direction {
+        match self {
+            Direction::North => Direction::West,
+            Direction::East => Direction::North,
+            Direction::South => Direction::East,
+            Direction::West => Direction::South,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
 enum MoveResult {
     Failure,
     Success(bool),
+    Invalid(Num),
 }
 
 impl From<Num> for MoveResult {
@@ -64,16 +73,17 @@ impl From<Num> for MoveResult {
             0 => MoveResult::Failure,
             1 => MoveResult::Success(false),
             2 => MoveResult::Success(true),
-            _ => unimplemented!("TODO: From<Num> for MoveResult"),
+            n => MoveResult::Invalid(n),
         }
     }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-enum Tile {
+pub enum Tile {
     Wall,
     Empty,
     Oxygen,
+    Origin,
     Unknown,
 }
 
@@ -83,33 +93,40 @@ impl Default for Tile {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Default)]
-struct Chunk {
-    data: [[Tile; 32]; 32]
-}
+pub fn render(map: &HashMap<Point, Tile>, center: &Point, direction: &Direction) {
+    const WIDTH: usize = 100;
+    const HEIGHT: usize = 100;
+    let mut p = Point::default();
+    let mut l = [' '; WIDTH];
+    let ox = center.x - (WIDTH / 2) as Num;
+    let oy = center.y - (HEIGHT / 2) as Num;
 
-#[derive(Clone, Debug)]
-struct Map<'a> {
-    pub size: Point,
-    pub current: &'a Chunk,
-    pub chunks: HashMap<Point, Chunk>,
-}
-impl<'a> Map<'_> {
-    #[allow(dead_code)]
-    fn new() -> Map<'a> {
-/*
-        let mut chunks = HashMap::new();
-        Map {
-            size: Point::new(32, 32),
-            current: chunks.entry(Point::default()).or_default(),
-            chunks,
+    for y in (0..HEIGHT).rev() {
+        p.y = oy + y as Num;
+        for x in 0..WIDTH {
+            p.x = ox + x as Num;
+            l[x] = if &p == center {
+                match direction {
+                    Direction::North => '^',
+                    Direction::South => 'v',
+                    Direction::East => '>',
+                    Direction::West => '<',
+                }
+            } else {
+                match map.get(&p) {
+                    Some(t) => match t {
+                        Tile::Oxygen => 'O',
+                        Tile::Wall => 'X',
+                        Tile::Empty => ' ',
+                        Tile::Origin => '@',
+                        Tile::Unknown => '#',
+                    },
+                    None => '#',
+                }
+            }
         }
-*/
-        unimplemented!()
+        println!("{}", l.iter().collect::<String>());
     }
-    /*fn chunk(&mut self, p: &Point) {
-        self.current = self.chunks.entry(p % &self.size).or_default();
-    }*/
 }
 
 impl AoCDay for Day15 {
@@ -120,9 +137,10 @@ impl AoCDay for Day15 {
         let mut map: HashMap<Point, Tile> = HashMap::new();
         let mut position = Point::default();
         let mut direction = Direction::North;
-        map.insert(position.clone(), Tile::Empty);
+        map.insert(position.clone(), Tile::Origin);
 
         let mut droid = IntCodeMachine::new(INTCODE.clone(), vec![direction.to_num()], 1000);
+        let mut queue: Vec<Point> = Vec::with_capacity(256);
         match loop {
             match droid.execute() {
                 Ok(status) => match status {
@@ -139,26 +157,25 @@ impl AoCDay for Day15 {
                             MoveResult::Success(found) => {
                                 // Update position and map
                                 direction.translate(&mut position);
+                                direction = direction.rotate_rev();
                                 if found {
                                     map.insert(position.clone(), Tile::Oxygen);
-                                    break Ok(());
+                                    // break Ok(());
                                 } else {
-                                    map.insert(position.clone(), Tile::Empty);
+                                    let _ = map.entry(position.clone()).or_insert(Tile::Empty);
                                 }
                             },
                             MoveResult::Failure => {
                                 let mut wall_pos = position.clone();
                                 direction.translate(&mut wall_pos);
-                                if map.get(&wall_pos).is_some() {
-                                    direction = direction.rotate();
-                                    direction = direction.rotate();
-                                }
                                 map.insert(wall_pos, Tile::Wall);
                                 direction = direction.rotate();
                             },
+                            _ => break Err(()),
                         }
-                        println!("{:?}", map);
-                        droid.input_buffer.push(Direction::North.to_num());
+                        println!();
+                        render(&map, &position, &direction);
+                        droid.input_buffer.push(direction.to_num());
                     },
                 },
                 Err(_err) => break Err(()),
