@@ -107,7 +107,7 @@ impl AoCDay for Day10 {
         // changes rotation direction and changing the value rotates around
         // the origin point
         fn normalize(f: f64) -> f64 {
-            ((f + (PI * 2.5)) % (PI * 2.0))
+            (f + (PI * 2.5)) % (PI * 2.0)
         }
 
         let mut angles: Vec<(&Point, f64)> = objects.iter().map(|o| (o, normalize(laser.atan2(o)))).collect();

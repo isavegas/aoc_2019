@@ -95,6 +95,7 @@ struct Map<'a> {
     pub chunks: HashMap<Point, Chunk>,
 }
 impl<'a> Map<'_> {
+    #[allow(dead_code)]
     fn new() -> Map<'a> {
 /*
         let mut chunks = HashMap::new();
