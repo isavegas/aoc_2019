@@ -1,4 +1,5 @@
 use crate::AoCDay;
+use crate::math::*;
 use lazy_static::lazy_static;
 
 type Num = isize;
@@ -138,7 +139,6 @@ impl AoCDay for Day12 {
                 break;
             }
         }
-        use num::integer::lcm;
         format!("{}", lcm(c.0, lcm(c.1, c.2)))
     }
 }

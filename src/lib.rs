@@ -19,3 +19,5 @@ pub use error::ErrorWrapper;
 mod day;
 pub mod intcode;
 pub use day::get_days;
+
+pub mod math;
