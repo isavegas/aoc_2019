@@ -141,19 +141,6 @@ mod instructions {
     }
 
     #[test]
-    fn input() {
-        let (machine, result) = run_code(parse_intcode("3,0,99").unwrap(), vec![4]);
-        assert!(
-            result.is_ok(),
-            format!("Crashed! {:?}", result.unwrap_err())
-        );
-        assert_eq!(
-            machine.memory.read_raw(0).unwrap(),
-            4,
-            "Fails to get existing input data without blocking"
-        )
-    }
-    #[test]
     fn output() {
         let (machine, result) = run_code(parse_intcode("4,0,99").unwrap(), vec![]);
         assert!(
