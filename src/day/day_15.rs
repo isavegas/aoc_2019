@@ -125,7 +125,7 @@ pub fn render(map: &HashMap<Point, Tile>, center: &Point, direction: &Direction)
                 }
             }
         }
-        println!("{}", l.iter().collect::<String>());
+        //println!("{}", l.iter().collect::<String>());
     }
 }
 
@@ -134,13 +134,13 @@ impl AoCDay for Day15 {
         15
     }
     fn part1(&self) -> String {
-        let mut map: HashMap<Point, Tile> = HashMap::new();
+/*        let mut map: HashMap<Point, Tile> = HashMap::new();
         let mut position = Point::default();
         let mut direction = Direction::North;
         map.insert(position.clone(), Tile::Origin);
 
         let mut droid = IntCodeMachine::new(INTCODE.clone(), vec![direction.to_num()], 1000);
-        let mut queue: Vec<Point> = Vec::with_capacity(256);
+        let mut _queue: Vec<Point> = Vec::with_capacity(256);
         match loop {
             match droid.execute() {
                 Ok(status) => match status {
@@ -173,7 +173,7 @@ impl AoCDay for Day15 {
                             },
                             _ => break Err(()),
                         }
-                        println!();
+                        //println!();
                         render(&map, &position, &direction);
                         droid.input_buffer.push(direction.to_num());
                     },
@@ -183,10 +183,13 @@ impl AoCDay for Day15 {
         } {
             Ok(_) => format!("{}", position),
             Err(_) => format!("Droid crashed!"),
-        }
+        }*/
+        //unimplemented!()
+        "".to_string()
     }
     fn part2(&self) -> String {
-        unimplemented!()
+        //unimplemented!()
+        "".to_string()
     }
 }
 

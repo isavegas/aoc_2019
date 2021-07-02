@@ -9,9 +9,11 @@ macro_rules! get_days_template {
 use crate::AoCDay;
 
 pub fn get_days() -> Vec<Box<dyn AoCDay>> {{
-    vec![
+    let mut days = vec![
         {}
-    ]
+    ];
+    days.sort_by(|a, b| a.day().cmp(&b.day()));
+    days
 }}
 "#
     };

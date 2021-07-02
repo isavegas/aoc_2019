@@ -39,7 +39,7 @@ pub fn main() {
         for d in days.iter() {
             let n = format!("{:02}", d.day());
             println!("Day {}, Part 1: {}", n, d.part1());
-            println!("Day {}, Part 2: {}", n, d.part2());            
+            println!("Day {}, Part 2: {}", n, d.part2());
         }
     }
 }
