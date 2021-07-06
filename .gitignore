@@ -1,5 +1,3 @@
 /target
 **/*.rs.bk
 **/*.swp
-/gen_day.exe
-/gen_day.pdb
