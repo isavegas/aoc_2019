@@ -7,11 +7,11 @@ default-run = "aoc_2019"
 
 [dependencies]
 intcode = { git = "https://github.com/isavegas/intcode", tag = "v1.0.0"}
-aoc_core = { git = "https://github.com/isavegas/aoc_core", tag = "v0.1.5"}
+aoc_core = { git = "https://github.com/isavegas/aoc_core", tag = "v0.1.8"}
 lazy_static = "1.4.0"
 permutohedron = "0.2.4"
 bytecount = { version = "0.6.2", features = ["runtime-dispatch-simd", "generic-simd"] }
 automod = "1.0.2"
 
 [build-dependencies]
-aoc_core = { git = "https://github.com/isavegas/aoc_core", tag = "v0.1.5"}
+aoc_core = { git = "https://github.com/isavegas/aoc_core", tag = "v0.1.8"}

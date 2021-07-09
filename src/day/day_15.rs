@@ -138,7 +138,7 @@ impl AoCDay for Day15 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
 /*        let mut map: HashMap<Point, Tile> = HashMap::new();
         let mut position = Point::default();
         let mut direction = Direction::North;
@@ -191,7 +191,7 @@ impl AoCDay for Day15 {
         }*/
         unimplemented!()
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         unimplemented!()
     }
 }

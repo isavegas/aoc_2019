@@ -79,7 +79,7 @@ impl AoCDay for Day03 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
         let input = get_input();
         let mut visited: HashMap<Point, bool> = HashMap::new();
@@ -109,7 +109,7 @@ impl AoCDay for Day03 {
                 .unwrap()
         ))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
         let input = get_input();
         let mut visited: HashMap<Point, usize> = HashMap::new();

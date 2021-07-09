@@ -91,10 +91,10 @@ impl AoCDay for Day10 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         Ok(BEST.1.to_string())
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut objects = POINTS.clone();
         // Temporary
         let laser = Point { x: 26, y: 36 };

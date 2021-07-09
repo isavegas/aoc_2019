@@ -38,12 +38,12 @@ impl AoCDay for Day13 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![], 100);
         machine.execute().expect("Machine has crashed!");
         Ok(format!("{}", machine.output_buffer.iter().skip(2).step_by(3).filter(|b| *b == &2).count()))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut intcode = INTCODE.clone();
         intcode[0] = 2;
         let mut machine = IntCodeMachine::new(intcode, vec![], 1000);

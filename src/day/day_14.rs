@@ -95,10 +95,10 @@ impl AoCDay for Day14 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         Ok(format!("{}", cost(FUEL_ID, 1, HashMap::new()).0))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut ore_count = 1_000_000_000_000;
         let mut store = HashMap::new();
         let mut amount = 0;

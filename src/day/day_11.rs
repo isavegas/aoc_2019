@@ -104,10 +104,10 @@ impl AoCDay for Day11 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         Ok(format!("{}", run_paint_machine(Paint::Black).1))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let (grid, _) = run_paint_machine(Paint::White);
         let max_y: i32 = grid.keys().max_by_key(|p| p.y).expect("Unable to get value").y;
         let min_y: i32 = grid.keys().min_by_key(|p| p.y).expect("Unable to get value").y;

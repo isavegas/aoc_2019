@@ -20,7 +20,7 @@ impl AoCDay for Day02 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (Some("4090689"), Some("77, 33"))
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut input = INTCODE.clone();
         input[1] = 12;
         input[2] = 2;
@@ -31,7 +31,7 @@ impl AoCDay for Day02 {
         }
         Ok(format!("{}", machine.memory.read_raw(0).unwrap()))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let input = INTCODE.clone();
         let max = 99;
         let mut first = 0;

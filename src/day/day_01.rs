@@ -38,7 +38,7 @@ impl AoCDay for Day1 {
         (Some("3452245"), Some("5175499"))
     }
 
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         Ok(FUEL.iter()
             .map(calc)
             .sum::<Num>()
@@ -46,7 +46,7 @@ impl AoCDay for Day1 {
         )
     }
 
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut total: Num = 0;
         let mut current = FUEL.clone();
         loop {

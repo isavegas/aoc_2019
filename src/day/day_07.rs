@@ -19,7 +19,7 @@ impl AoCDay for Day07 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         Ok(Heap::new(&mut [0, 1, 2, 3, 4])
             .map(|params| {
                 let mut signal = 0;
@@ -40,7 +40,7 @@ impl AoCDay for Day07 {
             .ok_or_else(|| ErrorWrapper::Simple("No max found".to_string()))?
             .to_string())
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         fn new_machine(phase: Num) -> IntCodeMachine {
             IntCodeMachine::new(INTCODE.clone(), vec![phase], 100)
         }

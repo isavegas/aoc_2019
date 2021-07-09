@@ -24,7 +24,7 @@ impl AoCDay for Day06 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut orbit_map: HashMap<&'static str, &'static str> = HashMap::new();
         for s in INPUT.trim().split('\n') {
             let v = s.split(')').collect::<Vec<&'static str>>();
@@ -39,7 +39,7 @@ impl AoCDay for Day06 {
         }
         Ok(format!("{}", orbits))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut orbit_map: HashMap<&'static str, &'static str> = HashMap::new();
         for s in INPUT.trim().split('\n') {
             let v = s.split(')').collect::<Vec<&'static str>>();

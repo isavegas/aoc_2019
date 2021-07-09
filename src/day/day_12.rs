@@ -113,14 +113,14 @@ impl AoCDay for Day12 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut bodies = BODIES.clone();
         for _t in 0..1000 {
             simulate(&mut bodies);
         }
         Ok(format!("{:?}", bodies.iter().map(|b| b.energy()).sum::<usize>()))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut bodies = BODIES.clone();
         macro_rules! dimension {
             ($n:tt) => {{

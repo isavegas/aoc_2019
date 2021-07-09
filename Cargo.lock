@@ -25,7 +25,8 @@ dependencies = [
 
 [[package]]
 name = "aoc_core"
-version = "0.1.4"
+version = "0.1.8"
+source = "git+https://github.com/isavegas/aoc_core?tag=v0.1.8#2d3b751b8fafc35a936d9e9525042527216cb75c"
 dependencies = [
  "clap",
 ]

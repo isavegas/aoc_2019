@@ -22,7 +22,7 @@ impl AoCDay for Day08 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let data = &*DATA;
         let mut layers = vec![];
         let layer_size = 25 * 6;
@@ -45,7 +45,7 @@ impl AoCDay for Day08 {
             bytecount::count(layer, 1) * bytecount::count(layer, 2)
         ))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let data = &*DATA;
         let mut layers = vec![];
         let width = 25;

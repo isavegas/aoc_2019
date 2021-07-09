@@ -19,7 +19,7 @@ impl AoCDay for Day05 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![1], 100);
         let err = machine.execute();
         if err.is_err() {
@@ -30,7 +30,7 @@ impl AoCDay for Day05 {
             machine.output_buffer[machine.output_buffer.len() - 1]
         ))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![5], 100);
         let err = machine.execute();
         if err.is_err() {

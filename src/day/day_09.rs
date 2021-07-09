@@ -13,7 +13,7 @@ impl AoCDay for Day09 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let code = parse_intcode(INPUT).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![1], 200);
         machine.execute()
@@ -24,7 +24,7 @@ impl AoCDay for Day09 {
             Err(e) => format!("Machine crashed! {:?}", e),
         } */
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let code = parse_intcode(INPUT).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![2], 2000);
         machine.execute()

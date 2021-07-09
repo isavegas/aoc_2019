@@ -65,7 +65,7 @@ impl AoCDay for Day04 {
     fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
         (None, None)
     }
-    fn part1(&self) -> Result<String, ErrorWrapper> {
+    fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let (a, b) = get_input();
         let mut found = 0;
         for n in a.num..b.num {
@@ -75,7 +75,7 @@ impl AoCDay for Day04 {
         }
         Ok(format!("{}", found))
     }
-    fn part2(&self) -> Result<String, ErrorWrapper> {
+    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let (a, b) = get_input();
         let mut found = 0;
         for n in a.num..b.num {
