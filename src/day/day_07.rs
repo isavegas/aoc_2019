@@ -1,11 +1,11 @@
-use crate::intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
-use crate::AoCDay;
+use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
+use crate::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 use permutohedron::Heap;
 
 pub struct Day07;
 
-const INPUT: &'static str = include_str!("../input/day_07.txt");
+const INPUT: &str = include_str!("../input/day_07.txt");
 
 lazy_static! {
     // This should ALWAYS succeed.
@@ -14,10 +14,13 @@ lazy_static! {
 
 impl AoCDay for Day07 {
     fn day(&self) -> usize {
-        07
+        7
     }
-    fn part1(&self) -> String {
-        Heap::new(&mut [0, 1, 2, 3, 4])
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
+        Ok(Heap::new(&mut [0, 1, 2, 3, 4])
             .map(|params| {
                 let mut signal = 0;
                 for p in &params {
@@ -34,14 +37,14 @@ impl AoCDay for Day07 {
                 signal
             })
             .max()
-            .unwrap()
-            .to_string()
+            .ok_or_else(|| ErrorWrapper::Simple("No max found".to_string()))?
+            .to_string())
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         fn new_machine(phase: Num) -> IntCodeMachine {
             IntCodeMachine::new(INTCODE.clone(), vec![phase], 100)
         }
-        Heap::new(&mut [5, 6, 7, 8, 9])
+        Ok(Heap::new(&mut [5, 6, 7, 8, 9])
             .map(|params| {
                 let mut machines: Vec<_> = params.iter().map(|p| new_machine(*p)).collect();
                 let mut signal = 0;
@@ -63,8 +66,8 @@ impl AoCDay for Day07 {
                 signal
             })
             .max()
-            .unwrap()
-            .to_string()
+            .ok_or_else(|| ErrorWrapper::Simple("No max found".to_string()))?
+            .to_string())
     }
 }
 

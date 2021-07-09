@@ -1,10 +1,10 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
 pub struct Day14;
 
-const INPUT: &'static str = include_str!("../input/day_14.txt");
+const INPUT: &str = include_str!("../input/day_14.txt");
 
 type ID = u16;
 
@@ -29,7 +29,7 @@ lazy_static! {
                 let len = lookup.len();
                 (split.next().unwrap().parse::<usize>().unwrap(), *lookup.entry(split.next().unwrap().trim()).or_insert(len as ID))
             }).collect();
-            map.entry(out).or_insert(vec![]).push((amount, components));
+            map.entry(out).or_insert_with(Vec::new).push((amount, components));
         }
         map
     };
@@ -92,10 +92,13 @@ impl AoCDay for Day14 {
     fn day(&self) -> usize {
         14
     }
-    fn part1(&self) -> String {
-        format!("{}", cost(FUEL_ID, 1, HashMap::new()).0)
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
     }
-    fn part2(&self) -> String {
+    fn part1(&self) -> Result<String, ErrorWrapper> {
+        Ok(format!("{}", cost(FUEL_ID, 1, HashMap::new()).0))
+    }
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let mut ore_count = 1_000_000_000_000;
         let mut store = HashMap::new();
         let mut amount = 0;
@@ -109,7 +112,7 @@ impl AoCDay for Day14 {
                 break;
             }
         }
-        format!("{}", amount)
+        Ok(format!("{}", amount))
     }
 }
 

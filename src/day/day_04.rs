@@ -1,10 +1,9 @@
-use crate::AoCDay;
-
+use crate::{AoCDay, ErrorWrapper};
 pub struct Day04;
 
 type Num = usize;
 
-const INPUT: &'static str = "172930-683082";
+const INPUT: &str = "172930-683082";
 
 fn adjacent(n: Num) -> bool {
     let n_str = format!("{}", n);
@@ -61,9 +60,12 @@ struct NumStr {
 
 impl AoCDay for Day04 {
     fn day(&self) -> usize {
-        04
+        4
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let (a, b) = get_input();
         let mut found = 0;
         for n in a.num..b.num {
@@ -71,9 +73,9 @@ impl AoCDay for Day04 {
                 found += 1
             }
         }
-        format!("{}", found)
+        Ok(format!("{}", found))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let (a, b) = get_input();
         let mut found = 0;
         for n in a.num..b.num {
@@ -81,7 +83,7 @@ impl AoCDay for Day04 {
                 found += 1
             }
         }
-        format!("{}", found)
+        Ok(format!("{}", found))
     }
 }
 

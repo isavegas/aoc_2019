@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 pub struct Day03;
 
-const INPUT: &'static str = include_str!("../input/day_03.txt");
+const INPUT: &str = include_str!("../input/day_03.txt");
 
 type Num = isize;
 
@@ -74,9 +74,12 @@ fn manhattan_distance(p1: &Point, p2: &Point) -> Num {
 
 impl AoCDay for Day03 {
     fn day(&self) -> usize {
-        03
+        3
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
         let input = get_input();
         let mut visited: HashMap<Point, bool> = HashMap::new();
@@ -97,16 +100,16 @@ impl AoCDay for Day03 {
                 }
             }
         }
-        format!(
+        Ok(format!(
             "{}",
             collisions
                 .iter()
                 .map(|p| p.manhattan_distance(&origin))
                 .min()
                 .unwrap()
-        )
+        ))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
         let input = get_input();
         let mut visited: HashMap<Point, usize> = HashMap::new();
@@ -122,7 +125,7 @@ impl AoCDay for Day03 {
                 }
             }
         }
-        last = origin.clone();
+        last = origin;
         n = 0;
         for pc in input[1].iter() {
             for _ in 0..pc.distance {
@@ -133,7 +136,7 @@ impl AoCDay for Day03 {
                 }
             }
         }
-        format!("{}", collisions.iter().min().unwrap())
+        Ok(format!("{}", collisions.iter().min().unwrap()))
     }
 }
 

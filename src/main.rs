@@ -1,3 +1,5 @@
+use aoc_2019::AoCDay;
+
 pub fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     let mut selected_day: Option<usize> = None;
@@ -19,27 +21,80 @@ pub fn main() {
 
     let days = aoc_2019::get_days();
 
-    if let Some(s) = selected_day {
-        let d = days
+    if let Some(day) = selected_day {
+        let day_impl = days
             .iter()
-            .find(|d| d.day() == s)
+            .find(|d| d.day() == day)
             .expect("Selected day not found");
-        let n = format!("{:02}", d.day());
-        if let Some(p) = selected_part {
-            match p {
-                1 => println!("Day {}, Part 1: {}", n, d.part1()),
-                2 => println!("Day {}, Part 2: {}", n, d.part2()),
-                _ => println!("Selected part not found"),
-            }
-        } else {
-            println!("Day {}, Part 1: {}", n, d.part1());
-            println!("Day {}, Part 2: {}", n, d.part2());
-        }
+
+        run_day(day_impl, selected_part);
     } else {
-        for d in days.iter() {
-            let n = format!("{:02}", d.day());
-            println!("Day {}, Part 1: {}", n, d.part1());
-            println!("Day {}, Part 2: {}", n, d.part2());
+        for day_impl in days.iter() {
+            run_day(day_impl, None);
         }
+    }
+}
+
+#[derive(Debug)]
+enum TestStatus {
+    Unknown,
+    Failure,
+    Success,
+}
+impl std::fmt::Display for TestStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "?"),
+            Self::Failure => write!(f, "✗"),
+            Self::Success => write!(f, "✓"),
+        }
+    }
+}
+
+// Clippy's suggestion for `&AoCDay` instead doesn't work. I need `Box<>` here
+#[allow(clippy::borrowed_box)]
+fn run_day(day_impl: &Box<dyn AoCDay>, part: Option<usize>) {
+    match part {
+        Some(p) => {
+            let (expected, val) = match p {
+                1 => (day_impl.expected().0, day_impl.part1()),
+                2 => (day_impl.expected().1, day_impl.part2()),
+                _ => unreachable!(),
+            };
+
+            let (status1, value) = check_status(expected, val);
+            println!(
+                "Day {:02}, Part {}: {} {}",
+                day_impl.day(),
+                p,
+                status1,
+                value
+            );
+        }
+        None => {
+            let (status1, value1) = check_status(day_impl.expected().0, day_impl.part1());
+            let (status2, value2) = check_status(day_impl.expected().1, day_impl.part2());
+            println!("Day {:02}, Part 1: {} {}", day_impl.day(), status1, value1);
+            println!("        Part 2: {} {}", status2, value2);
+        }
+    }
+}
+
+fn check_status(
+    expected: Option<&str>,
+    value: Result<String, aoc_2019::ErrorWrapper>,
+) -> (TestStatus, String) {
+    match value {
+        Ok(val) => {
+            let status = match expected {
+                Some(v) => match v == val {
+                    true => TestStatus::Success,
+                    false => TestStatus::Failure,
+                },
+                None => TestStatus::Unknown,
+            };
+            (status, val)
+        }
+        Err(err) => (TestStatus::Failure, err.to_string()),
     }
 }

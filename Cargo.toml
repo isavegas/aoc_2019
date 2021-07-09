@@ -5,18 +5,11 @@ authors = ["Kenzi Jeanis <isavegas2006@gmail.com>"]
 edition = "2018"
 default-run = "aoc_2019"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+intcode = { git = "https://github.com/isavegas/intcode", tag = "v1.0.0"}
+aoc_core = { git = "https://github.com/isavegas/aoc_core", tag = "v0.1.1"}
 maplit = "1.0.2"
 lazy_static = "1.4.0"
 permutohedron = "0.2.4"
 bytecount = { version = "0.6.2", features = ["runtime-dispatch-simd", "generic-simd"] }
 automod = "1.0.2"
-
-[dev-dependencies]
-criterion = "0.3.4"
-
-[[bench]]
-name = "intcode"
-harness = false

@@ -1,20 +1,30 @@
 macro_rules! template {
     () => {
-        r#"use crate::AoCDay;
+        r#"use crate::*;
+
+use lazy_static::lazy_static;
 
 pub struct Day{0};
 
+type Num = u64;
 const INPUT: &'static str = include_str!("../input/day_{0}.txt");
+
+lazy_static! {{
+    static ref DATA: Vec<Num> = crate::parse::numbers(INPUT);
+}}
 
 impl AoCDay for Day{0} {{
     fn day(&self) -> usize {{
         {0}
     }}
-    fn part1(&self) -> String {{
-        unimplemented!()
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {{
+        (None, None)
     }}
-    fn part2(&self) -> String {{
-        unimplemented!()
+    fn part1(&self) -> Result<String, ErrorWrapper> {{
+        Err(ErrorWrapper::NotImplemented)
+    }}
+    fn part2(&self) -> Result<String, ErrorWrapper> {{
+        Err(ErrorWrapper::NotImplemented)
     }}
 }}
 

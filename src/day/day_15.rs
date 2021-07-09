@@ -1,6 +1,9 @@
-use crate::AoCDay;
+// TODO: Finish day 15 and remove these allows
+#![allow(unused_imports, dead_code)]
+
+use crate::{bail, AoCDay, ErrorWrapper};
 use crate::Vec2;
-use crate::intcode::{ IntCodeMachine, parse_intcode, ExecutionStatus, Num };
+use intcode::{IntCodeMachine, parse_intcode, ExecutionStatus, Num };
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 
@@ -8,7 +11,7 @@ type Point = Vec2<Num>;
 
 pub struct Day15;
 
-const INPUT: &'static str = include_str!("../input/day_15.txt");
+const INPUT: &str = include_str!("../input/day_15.txt");
 
 lazy_static! {
     static ref INTCODE: Vec<Num> = parse_intcode(INPUT).expect("Unable to parse bundled intcode");
@@ -103,9 +106,9 @@ pub fn render(map: &HashMap<Point, Tile>, center: &Point, direction: &Direction)
 
     for y in (0..HEIGHT).rev() {
         p.y = oy + y as Num;
-        for x in 0..WIDTH {
+        for (x, v) in l.iter_mut().enumerate() {
             p.x = ox + x as Num;
-            l[x] = if &p == center {
+            *v = if &p == center {
                 match direction {
                     Direction::North => '^',
                     Direction::South => 'v',
@@ -133,7 +136,10 @@ impl AoCDay for Day15 {
     fn day(&self) -> usize {
         15
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
 /*        let mut map: HashMap<Point, Tile> = HashMap::new();
         let mut position = Point::default();
         let mut direction = Direction::North;
@@ -184,12 +190,10 @@ impl AoCDay for Day15 {
             Ok(_) => format!("{}", position),
             Err(_) => format!("Droid crashed!"),
         }*/
-        //unimplemented!()
-        "".to_string()
+        unimplemented!()
     }
-    fn part2(&self) -> String {
-        //unimplemented!()
-        "".to_string()
+    fn part2(&self) -> Result<String, ErrorWrapper> {
+        unimplemented!()
     }
 }
 

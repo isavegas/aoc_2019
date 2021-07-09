@@ -1,11 +1,11 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 
 pub struct Day02;
 
-const INPUT: &'static str = include_str!("../input/day_02.txt");
+const INPUT: &str = include_str!("../input/day_02.txt");
 
-use crate::intcode::{parse_intcode, IntCodeMachine, Num};
+use intcode::{parse_intcode, IntCodeMachine, Num};
 
 lazy_static! {
     // This should ALWAYS succeed.
@@ -16,7 +16,11 @@ impl AoCDay for Day02 {
     fn day(&self) -> usize {
         2
     }
-    fn part1(&self) -> String {
+
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (Some("4090689"), Some("77, 33"))
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let mut input = INTCODE.clone();
         input[1] = 12;
         input[2] = 2;
@@ -25,9 +29,9 @@ impl AoCDay for Day02 {
         if err.is_err() {
             println!("Error running machine! {:?}", err);
         }
-        format!("{}", machine.memory.read_raw(0).unwrap())
+        Ok(format!("{}", machine.memory.read_raw(0).unwrap()))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let input = INTCODE.clone();
         let max = 99;
         let mut first = 0;
@@ -39,7 +43,7 @@ impl AoCDay for Day02 {
             let mut machine = IntCodeMachine::new(i, vec![], 100);
             let r = machine.execute();
             if r.is_ok() && machine.memory.read_raw(0).unwrap() == 19690720 {
-                break format!("{}, {}", first, second);
+                break Ok(format!("{}, {}", first, second));
             } else {
                 //println!("{}, {} => {}", first, second, machine.memory[0]);
                 if second >= max {

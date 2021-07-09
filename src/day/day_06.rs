@@ -1,9 +1,9 @@
-use crate::AoCDay;
+use crate::{bail, AoCDay, ErrorWrapper};
 use std::collections::HashMap;
 
 pub struct Day06;
 
-const INPUT: &'static str = include_str!("../input/day_06.txt");
+const INPUT: &str = include_str!("../input/day_06.txt");
 
 fn build_chain(
     target: &'static str,
@@ -19,9 +19,12 @@ fn build_chain(
 
 impl AoCDay for Day06 {
     fn day(&self) -> usize {
-        06
+        6
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let mut orbit_map: HashMap<&'static str, &'static str> = HashMap::new();
         for s in INPUT.trim().split('\n') {
             let v = s.split(')').collect::<Vec<&'static str>>();
@@ -34,9 +37,9 @@ impl AoCDay for Day06 {
             build_chain(key, &orbit_map, &mut cache);
             orbits += cache.len();
         }
-        format!("{}", orbits)
+        Ok(format!("{}", orbits))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let mut orbit_map: HashMap<&'static str, &'static str> = HashMap::new();
         for s in INPUT.trim().split('\n') {
             let v = s.split(')').collect::<Vec<&'static str>>();
@@ -49,10 +52,10 @@ impl AoCDay for Day06 {
 
         for (i, n) in start.iter().enumerate() {
             if let Some(i2) = end.iter().position(|f| f == n) {
-                return format!("{}", i + i2);
+                return Ok(format!("{}", i + i2));
             }
         }
-        format!("Unable to find common orbit")
+        bail!("Unable to find common orbit")
     }
 }
 

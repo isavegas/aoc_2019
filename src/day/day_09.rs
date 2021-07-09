@@ -1,30 +1,39 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 
 pub struct Day09;
 
-use crate::intcode::{parse_intcode, IntCodeMachine};
+use intcode::{parse_intcode, IntCodeMachine};
 
-const INPUT: &'static str = include_str!("../input/day_09.txt");
+const INPUT: &str = include_str!("../input/day_09.txt");
 
 impl AoCDay for Day09 {
     fn day(&self) -> usize {
-        09
+        9
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let code = parse_intcode(INPUT).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![1], 200);
-        match machine.execute() {
+        machine.execute()
+            .map(|_| format!("{}", machine.output_buffer.pop().unwrap()))
+            .map_err(|e| ErrorWrapper::Simple(format!("{:?}", e)))
+        /* match machine.execute() {
             Ok(_) => format!("{}", machine.output_buffer.pop().unwrap()),
             Err(e) => format!("Machine crashed! {:?}", e),
-        }
+        } */
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let code = parse_intcode(INPUT).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![2], 2000);
-        match machine.execute() {
+        machine.execute()
+            .map(|_| format!("{}", machine.output_buffer.pop().unwrap()))
+            .map_err(|e| ErrorWrapper::Simple(format!("{:?}", e)))
+        /* match machine.execute() {
             Ok(_) => format!("{}", machine.output_buffer.pop().unwrap()),
             Err(e) => format!("Machine crashed! {:?}", e),
-        }
+        } */
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 use crate::math::*;
 use lazy_static::lazy_static;
 
@@ -6,7 +6,7 @@ type Num = isize;
 type Vec3 = crate::Vec3<Num>;
 pub struct Day12;
 
-const INPUT: &'static str = include_str!("../input/day_12.txt");
+const INPUT: &str = include_str!("../input/day_12.txt");
 
 fn parse(input: &str) -> Vec<Body> {
     input.trim().lines().enumerate().map(|(i, l)| {
@@ -51,29 +51,39 @@ impl Body {
     }
 
     fn interact(&mut self, other: &mut Self) {
-        let delta_x = self.position.x - other.position.x;
-        if delta_x > 0 {
-            self.velocity.x -= 1;
-            other.velocity.x += 1;
-        } else if delta_x < 0 {
-            self.velocity.x += 1;
-            other.velocity.x -= 1;
+        use std::cmp::Ordering;
+        match (self.position.x - other.position.x).cmp(&0) {
+            Ordering::Greater => {
+                self.velocity.x -= 1;
+                other.velocity.x += 1;
+            },
+            Ordering::Less => {
+                self.velocity.x += 1;
+                other.velocity.x -= 1;
+            },
+            Ordering::Equal => (),
         }
-        let delta_y = self.position.y - other.position.y;
-        if delta_y > 0 {
-            self.velocity.y -= 1;
-            other.velocity.y += 1;
-        } else if delta_y < 0 {
-            self.velocity.y += 1;
-            other.velocity.y -= 1;
+        match (self.position.y - other.position.y).cmp(&0) {
+            Ordering::Greater => {
+                self.velocity.y -= 1;
+                other.velocity.y += 1;
+            },
+            Ordering::Less => {
+                self.velocity.y += 1;
+                other.velocity.y -= 1;
+            },
+            Ordering::Equal => (),
         }
-        let delta_z = self.position.z - other.position.z;
-        if delta_z > 0 {
-            self.velocity.z -= 1;
-            other.velocity.z += 1;
-        } else if delta_z < 0 {
-            self.velocity.z += 1;
-            other.velocity.z -= 1;
+        match (self.position.z - other.position.z).cmp(&0) {
+            Ordering::Greater => {
+                self.velocity.z -= 1;
+                other.velocity.z += 1;
+            },
+            Ordering::Less => {
+                self.velocity.z += 1;
+                other.velocity.z -= 1;
+            },
+            Ordering::Equal => (),
         }
     }
 
@@ -101,14 +111,17 @@ impl AoCDay for Day12 {
     fn day(&self) -> usize {
         12
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let mut bodies = BODIES.clone();
         for _t in 0..1000 {
             simulate(&mut bodies);
         }
-        format!("{:?}", bodies.iter().map(|b| b.energy()).sum::<usize>())
+        Ok(format!("{:?}", bodies.iter().map(|b| b.energy()).sum::<usize>()))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let mut bodies = BODIES.clone();
         macro_rules! dimension {
             ($n:tt) => {{
@@ -139,7 +152,7 @@ impl AoCDay for Day12 {
                 break;
             }
         }
-        format!("{}", lcm(c.0, lcm(c.1, c.2)))
+        Ok(format!("{}", lcm(c.0, lcm(c.1, c.2))))
     }
 }
 

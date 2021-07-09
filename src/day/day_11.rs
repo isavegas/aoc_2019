@@ -1,5 +1,5 @@
-use crate::AoCDay;
-use crate::intcode::{parse_intcode, IntCodeMachine, Num, ExecutionStatus};
+use crate::{AoCDay, ErrorWrapper};
+use intcode::{parse_intcode, IntCodeMachine, Num, ExecutionStatus};
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
@@ -7,7 +7,7 @@ type Point = crate::Vec2<i32>;
 
 pub struct Day11;
 
-const INPUT: &'static str = include_str!("../input/day_11.txt");
+const INPUT: &str = include_str!("../input/day_11.txt");
 
 lazy_static! {
     static ref INTCODE: Vec<Num> = parse_intcode(INPUT).expect("Input is not a valid intcode program");
@@ -101,10 +101,13 @@ impl AoCDay for Day11 {
     fn day(&self) -> usize {
         11
     }
-    fn part1(&self) -> String {
-        format!("{}", run_paint_machine(Paint::Black).1)
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
     }
-    fn part2(&self) -> String {
+    fn part1(&self) -> Result<String, ErrorWrapper> {
+        Ok(format!("{}", run_paint_machine(Paint::Black).1))
+    }
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let (grid, _) = run_paint_machine(Paint::White);
         let max_y: i32 = grid.keys().max_by_key(|p| p.y).expect("Unable to get value").y;
         let min_y: i32 = grid.keys().min_by_key(|p| p.y).expect("Unable to get value").y;
@@ -128,7 +131,7 @@ impl AoCDay for Day11 {
             println!("{}", line.iter().collect::<String>());
         }
 
-        format!("Image written to console")
+        Ok("Image written to console".to_string())
     }
 }
 

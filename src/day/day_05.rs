@@ -1,11 +1,11 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 
 pub struct Day05;
 
-const INPUT: &'static str = include_str!("../input/day_05.txt");
+const INPUT: &str = include_str!("../input/day_05.txt");
 
-use crate::intcode::{parse_intcode, IntCodeMachine, Num};
+use intcode::{parse_intcode, IntCodeMachine, Num};
 
 lazy_static! {
     // This should ALWAYS succeed.
@@ -14,29 +14,32 @@ lazy_static! {
 
 impl AoCDay for Day05 {
     fn day(&self) -> usize {
-        2
+        5
     }
-    fn part1(&self) -> String {
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (None, None)
+    }
+    fn part1(&self) -> Result<String, ErrorWrapper> {
         let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![1], 100);
         let err = machine.execute();
         if err.is_err() {
             println!("Error running machine! {:?}", err);
         }
-        format!(
+        Ok(format!(
             "{:?}",
             machine.output_buffer[machine.output_buffer.len() - 1]
-        )
+        ))
     }
-    fn part2(&self) -> String {
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![5], 100);
         let err = machine.execute();
         if err.is_err() {
             println!("Error running machine! {:?}", err);
         }
-        format!(
+        Ok(format!(
             "{:?}",
             machine.output_buffer[machine.output_buffer.len() - 1]
-        )
+        ))
     }
 }
 

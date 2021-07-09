@@ -1,16 +1,16 @@
-use crate::AoCDay;
+use crate::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 
 pub struct Day1;
 
-const INPUT: &'static str = include_str!("../input/day_01.txt");
+const INPUT: &str = include_str!("../input/day_01.txt");
 type Num = u64;
 
 fn parse(input: &str) -> Vec<Num> {
     input
         .lines()
         .map(str::trim)
-        .filter(|l| l.len() > 0)
+        .filter(|l| !l.is_empty())
         .map(str::parse)
         .map(Result::unwrap)
         .collect()
@@ -19,7 +19,6 @@ fn parse(input: &str) -> Vec<Num> {
 lazy_static! {
     static ref FUEL: Vec<Num> = parse(INPUT);
 }
-
 
 fn calc(n: &Num) -> Num {
     let n2 = n / 3;
@@ -34,15 +33,20 @@ impl AoCDay for Day1 {
     fn day(&self) -> usize {
         1
     }
-    fn part1(&self) -> String {
-        format!(
-            "{}",
-            FUEL.iter()
-                .map(calc)
-                .sum::<Num>()
+
+    fn expected(&self) -> (Option<&'static str>, Option<&'static str>) {
+        (Some("3452245"), Some("5175499"))
+    }
+
+    fn part1(&self) -> Result<String, ErrorWrapper> {
+        Ok(FUEL.iter()
+            .map(calc)
+            .sum::<Num>()
+            .to_string()
         )
     }
-    fn part2(&self) -> String {
+
+    fn part2(&self) -> Result<String, ErrorWrapper> {
         let mut total: Num = 0;
         let mut current = FUEL.clone();
         loop {
@@ -56,7 +60,7 @@ impl AoCDay for Day1 {
                 break;
             }
         }
-        format!("{}", total)
+        Ok(total.to_string())
     }
 }
 

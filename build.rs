@@ -1,3 +1,5 @@
+#![feature(option_result_contains)]
+
 use std::env;
 use std::fs::{read_dir, File};
 use std::io::Write;
@@ -12,7 +14,8 @@ pub fn get_days() -> Vec<Box<dyn AoCDay>> {{
     let mut days = vec![
         {}
     ];
-    days.sort_by(|a, b| a.day().cmp(&b.day()));
+    // Enforce sorting by day at runtime
+    days.sort_by_key(|d| d.day());
     days
 }}
 "#
@@ -23,10 +26,20 @@ pub fn main() {
     let in_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let days_path = Path::new(&in_dir).join("src/day/");
     let days: Vec<String> = read_dir(days_path)
-        .unwrap()
-        .map(|e| e.unwrap().path())
-        .filter(|e| e.is_file() && e.extension().is_some() && e.extension().unwrap() == "rs")
-        .map(|e| e.file_stem().unwrap().to_str().unwrap().to_string())
+        .expect("Unable to access $CARGO_MANIFEST_DIR/src/day/")
+        .map(|e| {
+            e.expect("Error occured while iterating $CARGO_MANIFEST_DIR/src/day")
+                .path()
+        })
+        .filter(|e| e.is_file())
+        .filter(|e| e.extension().contains(&"rs"))
+        .map(|e| {
+            e.file_stem()
+                .unwrap()
+                .to_str()
+                .expect("Invalid filename")
+                .to_string()
+        })
         .filter(|f| f.starts_with("day_"))
         .collect();
 
