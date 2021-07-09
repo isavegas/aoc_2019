@@ -1,4 +1,4 @@
-use crate::{bail, AoCDay, ErrorWrapper};
+use aoc_core::{bail, AoCDay, ErrorWrapper};
 use std::collections::HashMap;
 
 pub struct Day06;

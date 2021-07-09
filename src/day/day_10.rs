@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
-use crate::{AoCDay, ErrorWrapper};
+use aoc_core::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 
 pub struct Day10;

@@ -1,4 +1,4 @@
-use crate::{AoCDay, ErrorWrapper};
+use aoc_core::{AoCDay, ErrorWrapper};
 use intcode::{ IntCodeMachine, ExecutionStatus, Num, parse_intcode };
 use lazy_static::lazy_static;
 

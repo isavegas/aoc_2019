@@ -1,9 +1,8 @@
-use crate::{AoCDay, ErrorWrapper};
-use crate::math::*;
+use aoc_core::{AoCDay, ErrorWrapper, math};
 use lazy_static::lazy_static;
 
 type Num = isize;
-type Vec3 = crate::Vec3<Num>;
+type Vec3 = aoc_core::Vec3<Num>;
 pub struct Day12;
 
 const INPUT: &str = include_str!("../input/day_12.txt");
@@ -152,7 +151,7 @@ impl AoCDay for Day12 {
                 break;
             }
         }
-        Ok(format!("{}", lcm(c.0, lcm(c.1, c.2))))
+        Ok(format!("{}", math::lcm(c.0, math::lcm(c.1, c.2))))
     }
 }
 

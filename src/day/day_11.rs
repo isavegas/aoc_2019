@@ -1,9 +1,9 @@
-use crate::{AoCDay, ErrorWrapper};
+use aoc_core::{AoCDay, ErrorWrapper};
 use intcode::{parse_intcode, IntCodeMachine, Num, ExecutionStatus};
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
-type Point = crate::Vec2<i32>;
+type Point = aoc_core::Vec2<i32>;
 
 pub struct Day11;
 

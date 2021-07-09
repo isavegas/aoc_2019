@@ -1,4 +1,4 @@
-use aoc_2019::AoCDay;
+use aoc_core::AoCDay;
 
 pub fn main() {
     let args = std::env::args().collect::<Vec<String>>();
@@ -82,7 +82,7 @@ fn run_day(day_impl: &Box<dyn AoCDay>, part: Option<usize>) {
 
 fn check_status(
     expected: Option<&str>,
-    value: Result<String, aoc_2019::ErrorWrapper>,
+    value: Result<String, aoc_core::ErrorWrapper>,
 ) -> (TestStatus, String) {
     match value {
         Ok(val) => {

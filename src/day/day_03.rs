@@ -1,4 +1,4 @@
-pub use crate::{bail, ensure, AoCDay, ErrorWrapper};
+pub use aoc_core::{bail, ensure, AoCDay, ErrorWrapper};
 use std::collections::HashMap;
 use std::str::FromStr;
 
@@ -34,7 +34,7 @@ impl PathComponent {
 }
 
 impl FromStr for PathComponent {
-    type Err = crate::ErrorWrapper;
+    type Err = aoc_core::ErrorWrapper;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.len() >= 2 {

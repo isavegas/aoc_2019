@@ -1,16 +1,17 @@
 macro_rules! template {
     () => {
-        r#"use crate::*;
+        r#"
 
+use aoc_core::{{AoCDay, ErrorWrapper}};
 use lazy_static::lazy_static;
 
 pub struct Day{0};
 
 type Num = u64;
-const INPUT: &'static str = include_str!("../input/day_{0}.txt");
+const INPUT: &str = include_str!("../input/day_{0}.txt");
 
 lazy_static! {{
-    static ref DATA: Vec<Num> = crate::parse::numbers(INPUT);
+    static ref DATA: Vec<Num> = vec![];
 }}
 
 impl AoCDay for Day{0} {{

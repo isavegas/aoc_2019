@@ -1,4 +1,4 @@
-use crate::{AoCDay, ErrorWrapper};
+use aoc_core::{AoCDay, ErrorWrapper};
 pub struct Day04;
 
 type Num = usize;

@@ -1,5 +1,5 @@
 use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
-use crate::{AoCDay, ErrorWrapper};
+use aoc_core::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 use permutohedron::Heap;
 

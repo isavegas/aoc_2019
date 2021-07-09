@@ -1,8 +1,7 @@
 // TODO: Finish day 15 and remove these allows
 #![allow(unused_imports, dead_code)]
 
-use crate::{bail, AoCDay, ErrorWrapper};
-use crate::Vec2;
+use aoc_core::{bail, AoCDay, ErrorWrapper, Vec2};
 use intcode::{IntCodeMachine, parse_intcode, ExecutionStatus, Num };
 use std::collections::HashMap;
 use lazy_static::lazy_static;
