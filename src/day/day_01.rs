@@ -1,10 +1,10 @@
 use aoc_core::{AoCDay, ErrorWrapper};
 use lazy_static::lazy_static;
 
-pub struct Day1;
-
 const INPUT: &str = include_str!("../input/day_01.txt");
 type Num = u64;
+
+struct Day01;
 
 fn parse(input: &str) -> Vec<Num> {
     input
@@ -16,9 +16,9 @@ fn parse(input: &str) -> Vec<Num> {
         .collect()
 }
 
-lazy_static! {
+/*lazy_static! {
     static ref FUEL: Vec<Num> = parse(INPUT);
-}
+}*/
 
 fn calc(n: &Num) -> Num {
     let n2 = n / 3;
@@ -29,7 +29,7 @@ fn calc(n: &Num) -> Num {
     }
 }
 
-impl AoCDay for Day1 {
+impl AoCDay for Day01 {
     fn day(&self) -> usize {
         1
     }
@@ -39,7 +39,7 @@ impl AoCDay for Day1 {
     }
 
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-        Ok(FUEL.iter()
+        Ok(parse(input).iter()
             .map(calc)
             .sum::<Num>()
             .to_string()
@@ -48,7 +48,7 @@ impl AoCDay for Day1 {
 
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let mut total: Num = 0;
-        let mut current = FUEL.clone();
+        let mut current = parse(input);
         loop {
             for f in current.iter_mut().filter(|f| *f > &mut 0) {
                 *f = calc(f);
@@ -65,5 +65,5 @@ impl AoCDay for Day1 {
 }
 
 pub fn get_day() -> Box<dyn AoCDay> {
-    Box::new(Day1)
+    Box::new(Day01)
 }
