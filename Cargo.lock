@@ -19,13 +19,12 @@ dependencies = [
  "automod",
  "bytecount",
  "intcode",
- "lazy_static",
  "permutohedron",
 ]
 
 [[package]]
 name = "aoc_core"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "clap",
 ]
@@ -101,12 +100,6 @@ dependencies = [
 name = "intcode"
 version = "1.0.0"
 source = "git+https://github.com/isavegas/intcode?tag=v1.0.0#a80167e241382393af814b5aae2601d1deaae418"
-
-[[package]]
-name = "lazy_static"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"

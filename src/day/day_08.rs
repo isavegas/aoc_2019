@@ -1,19 +1,10 @@
 use aoc_core::{AoCDay, ErrorWrapper};
-use lazy_static::lazy_static;
 
 pub struct Day08;
 
 type Num = u8;
 
 const INPUT: &str = include_str!("../input/day_08.txt");
-
-lazy_static! {
-    static ref DATA: Vec<Num> = INPUT
-        .trim()
-        .chars()
-        .map(|d| d.to_digit(10).unwrap() as u8)
-        .collect();
-}
 
 impl AoCDay for Day08 {
     fn day(&self) -> usize {
@@ -23,7 +14,7 @@ impl AoCDay for Day08 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let data = &*DATA;
+        let data = &*parse_input(input);
         let mut layers = vec![];
         let layer_size = 25 * 6;
         let mut o = 0;
@@ -46,7 +37,7 @@ impl AoCDay for Day08 {
         ))
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let data = &*DATA;
+        let data = &*parse_input(input);
         let mut layers = vec![];
         let width = 25;
         let height = 6;
@@ -85,4 +76,12 @@ impl AoCDay for Day08 {
 
 pub fn get_day() -> Box<dyn AoCDay> {
     Box::new(Day08)
+}
+
+fn parse_input(input: &str) -> Vec<u8> {
+    input
+        .trim()
+        .chars()
+        .map(|d| d.to_digit(10).unwrap() as u8)
+        .collect()
 }

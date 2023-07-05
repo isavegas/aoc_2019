@@ -1,13 +1,8 @@
 use aoc_core::{AoCDay, ErrorWrapper};
-use intcode::{ IntCodeMachine, ExecutionStatus, Num, parse_intcode };
-use lazy_static::lazy_static;
-
+use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
 pub struct Day13;
 
 const INPUT: &str = include_str!("../input/day_13.txt");
-lazy_static! {
-    static ref INTCODE: Vec<Num> = parse_intcode(INPUT).expect("Unable to parse bundled intcode");
-}
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 enum Tile {
@@ -39,12 +34,22 @@ impl AoCDay for Day13 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![], 100);
+        let intcode = parse_intcode(input).expect("Invalid intcode");
+        let mut machine = IntCodeMachine::new(intcode, vec![], 100);
         machine.execute().expect("Machine has crashed!");
-        Ok(format!("{}", machine.output_buffer.iter().skip(2).step_by(3).filter(|b| *b == &2).count()))
+        Ok(format!(
+            "{}",
+            machine
+                .output_buffer
+                .iter()
+                .skip(2)
+                .step_by(3)
+                .filter(|b| *b == &2)
+                .count()
+        ))
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let mut intcode = INTCODE.clone();
+        let mut intcode = parse_intcode(input).expect("Invalid intcode");
         intcode[0] = 2;
         let mut machine = IntCodeMachine::new(intcode, vec![], 1000);
 
@@ -68,27 +73,27 @@ impl AoCDay for Day13 {
                     state.score = command;
                 } else {
                     match Tile::from(command) {
-                                Tile::Ball => state.ball_pos = x,
-                                Tile::Paddle => state.paddle_pos = x,
-                                _ => (),
-                            }
-                        }
+                        Tile::Ball => state.ball_pos = x,
+                        Tile::Paddle => state.paddle_pos = x,
+                        _ => (),
                     }
-                    
-                    use std::cmp::Ordering;
-                    match state.ball_pos.cmp(&state.paddle_pos) {
-                        Ordering::Greater => machine.input_buffer.push(1),
-                        Ordering::Less => machine.input_buffer.push(-1),
-                        Ordering::Equal => machine.input_buffer.push(0),
-                    }
+                }
+            }
+
+            use std::cmp::Ordering;
+            match state.ball_pos.cmp(&state.paddle_pos) {
+                Ordering::Greater => machine.input_buffer.push(1),
+                Ordering::Less => machine.input_buffer.push(-1),
+                Ordering::Equal => machine.input_buffer.push(0),
+            }
         }
         loop {
             match machine.execute().expect("Machine has crashed!") {
                 ExecutionStatus::Halted => {
                     handle_output(&mut machine, &mut state);
                     break;
-                },
-                ExecutionStatus::Blocking => handle_output(&mut machine, &mut state)
+                }
+                ExecutionStatus::Blocking => handle_output(&mut machine, &mut state),
             }
         }
         Ok(format!("{}", state.score))

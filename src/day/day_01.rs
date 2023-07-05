@@ -1,7 +1,5 @@
 use aoc_core::{AoCDay, ErrorWrapper};
-use lazy_static::lazy_static;
 
-const INPUT: &str = include_str!("../input/day_01.txt");
 type Num = u64;
 
 struct Day01;

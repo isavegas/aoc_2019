@@ -4,8 +4,6 @@ use std::str::FromStr;
 
 pub struct Day03;
 
-const INPUT: &str = include_str!("../input/day_03.txt");
-
 type Num = isize;
 
 #[derive(Debug, PartialEq)]
@@ -81,7 +79,7 @@ impl AoCDay for Day03 {
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
-        let input = get_input();
+        let input = parse_input(input);
         let mut visited: HashMap<Point, bool> = HashMap::new();
         let mut collisions = vec![];
         let mut last = origin.clone();
@@ -111,7 +109,7 @@ impl AoCDay for Day03 {
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
         let origin = Point { x: 0, y: 0 };
-        let input = get_input();
+        let input = parse_input(input);
         let mut visited: HashMap<Point, usize> = HashMap::new();
         let mut collisions = vec![];
         let mut last = origin.clone();
@@ -144,8 +142,8 @@ pub fn get_day() -> Box<dyn AoCDay> {
     Box::new(Day03)
 }
 
-fn get_input() -> Vec<Vec<PathComponent>> {
-    INPUT
+fn parse_input(input: &str) -> Vec<Vec<PathComponent>> {
+    input
         .trim()
         .split('\n')
         .map(String::from)

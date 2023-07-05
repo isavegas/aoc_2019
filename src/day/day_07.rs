@@ -1,16 +1,8 @@
-use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
 use aoc_core::{AoCDay, ErrorWrapper};
-use lazy_static::lazy_static;
+use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
 use permutohedron::Heap;
 
 pub struct Day07;
-
-const INPUT: &str = include_str!("../input/day_07.txt");
-
-lazy_static! {
-    // This should ALWAYS succeed.
-    static ref INTCODE: Vec<Num> = parse_intcode(INPUT).expect("Unable to parse input");
-}
 
 impl AoCDay for Day07 {
     fn day(&self) -> usize {
@@ -20,11 +12,12 @@ impl AoCDay for Day07 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
+        let intcode = parse_intcode(input).expect("Invalid intcode");
         Ok(Heap::new(&mut [0, 1, 2, 3, 4])
             .map(|params| {
                 let mut signal = 0;
                 for p in &params {
-                    let mut machine = IntCodeMachine::new(INTCODE.clone(), vec![*p, signal], 100);
+                    let mut machine = IntCodeMachine::new(intcode.clone(), vec![*p, signal], 100);
                     assert!(
                         machine.execute().expect("Machine crashed!") == ExecutionStatus::Halted,
                         "Machine blocking!"
@@ -41,12 +34,16 @@ impl AoCDay for Day07 {
             .to_string())
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
-        fn new_machine(phase: Num) -> IntCodeMachine {
-            IntCodeMachine::new(INTCODE.clone(), vec![phase], 100)
+        let intcode = parse_intcode(input).expect("Invalid intcode");
+        fn new_machine(phase: Num, code: Vec<isize>) -> IntCodeMachine {
+            IntCodeMachine::new(code, vec![phase], 100)
         }
         Ok(Heap::new(&mut [5, 6, 7, 8, 9])
             .map(|params| {
-                let mut machines: Vec<_> = params.iter().map(|p| new_machine(*p)).collect();
+                let mut machines: Vec<_> = params
+                    .iter()
+                    .map(|p| new_machine(*p, intcode.clone()))
+                    .collect();
                 let mut signal = 0;
                 let mut i = 0;
                 while !machines[4].halt {

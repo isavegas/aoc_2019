@@ -4,8 +4,6 @@ pub struct Day09;
 
 use intcode::{parse_intcode, IntCodeMachine};
 
-const INPUT: &str = include_str!("../input/day_09.txt");
-
 impl AoCDay for Day09 {
     fn day(&self) -> usize {
         9
@@ -14,9 +12,10 @@ impl AoCDay for Day09 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let code = parse_intcode(INPUT).unwrap();
+        let code = parse_intcode(input).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![1], 200);
-        machine.execute()
+        machine
+            .execute()
             .map(|_| format!("{}", machine.output_buffer.pop().unwrap()))
             .map_err(|e| ErrorWrapper::Simple(format!("{:?}", e)))
         /* match machine.execute() {
@@ -25,9 +24,10 @@ impl AoCDay for Day09 {
         } */
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let code = parse_intcode(INPUT).unwrap();
+        let code = parse_intcode(input).unwrap();
         let mut machine = IntCodeMachine::new(code, vec![2], 2000);
-        machine.execute()
+        machine
+            .execute()
             .map(|_| format!("{}", machine.output_buffer.pop().unwrap()))
             .map_err(|e| ErrorWrapper::Simple(format!("{:?}", e)))
         /* match machine.execute() {

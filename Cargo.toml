@@ -9,7 +9,6 @@ include = ["src/**/*", "README.md", "build.rs"]
 [dependencies]
 intcode = { git = "https://github.com/isavegas/intcode", tag = "v1.0.0" }
 aoc_core = { path = "./aoc_core" }
-lazy_static = "1.4.0"
 permutohedron = "0.2.4"
 bytecount = { version = "0.6.2", features = ["runtime-dispatch-simd", "generic-simd"] }
 automod = "1.0.2"

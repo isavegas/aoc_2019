@@ -2,19 +2,14 @@
 #![allow(unused_imports, dead_code)]
 
 use aoc_core::{bail, AoCDay, ErrorWrapper, Vec2};
-use intcode::{IntCodeMachine, parse_intcode, ExecutionStatus, Num };
+use intcode::{parse_intcode, ExecutionStatus, IntCodeMachine, Num};
 use std::collections::HashMap;
-use lazy_static::lazy_static;
 
 type Point = Vec2<Num>;
 
 pub struct Day15;
 
 const INPUT: &str = include_str!("../input/day_15.txt");
-
-lazy_static! {
-    static ref INTCODE: Vec<Num> = parse_intcode(INPUT).expect("Unable to parse bundled intcode");
-}
 
 #[derive(Clone, Debug)]
 pub enum Direction {
@@ -139,12 +134,13 @@ impl AoCDay for Day15 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-/*        let mut map: HashMap<Point, Tile> = HashMap::new();
+        let intcode = parse_intcode(input).expect("Invalid intcode");
+        /*        let mut map: HashMap<Point, Tile> = HashMap::new();
         let mut position = Point::default();
         let mut direction = Direction::North;
         map.insert(position.clone(), Tile::Origin);
 
-        let mut droid = IntCodeMachine::new(INTCODE.clone(), vec![direction.to_num()], 1000);
+        let mut droid = IntCodeMachine::new(intcode, vec![direction.to_num()], 1000);
         let mut _queue: Vec<Point> = Vec::with_capacity(256);
         match loop {
             match droid.execute() {
@@ -191,7 +187,7 @@ impl AoCDay for Day15 {
         }*/
         unimplemented!()
     }
-    fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
+    fn part2(&self, _input: &str) -> Result<String, ErrorWrapper> {
         unimplemented!()
     }
 }

@@ -1,39 +1,32 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 use aoc_core::{AoCDay, ErrorWrapper};
-use lazy_static::lazy_static;
 
 pub struct Day10;
 
 const INPUT: &str = include_str!("../input/day_10.txt");
 
-lazy_static! {
-    static ref POINTS: Vec<Point> = {
-        let map: Vec<Vec<bool>> = INPUT
-            .trim()
-            .lines()
-            .map(|l| l
-                .chars()
-                .map(|c| matches!(c, '#'))
-                .collect())
-            .collect();
-        let width = map[0].len();
-        let mut points = vec![];
-        // This is much simpler to reason about than clippy's suggestion
-        #[allow(clippy::needless_range_loop)]
-        for y in 0..map.len() {
-            for x in 0..width {
-                if map[y][x] {
-                    points.push(Point { x: x as i64, y: y as i64});
-                }
+fn parse_input(input: &str) -> Vec<Point> {
+    let map: Vec<Vec<bool>> = INPUT
+        .trim()
+        .lines()
+        .map(|l| l.chars().map(|c| matches!(c, '#')).collect())
+        .collect();
+    let width = map[0].len();
+    let mut points = vec![];
+    // This is much simpler to reason about than clippy's suggestion
+    #[allow(clippy::needless_range_loop)]
+    for y in 0..map.len() {
+        for x in 0..width {
+            if map[y][x] {
+                points.push(Point {
+                    x: x as i64,
+                    y: y as i64,
+                });
             }
         }
-        points
-    };
-    static ref BEST: (Point, usize) = {
-        let (b, a) = best_visibility(&POINTS);
-        (b.clone(), a)
-    };
+    }
+    points
 }
 
 #[derive(Debug, PartialEq, Clone, Eq, Hash)]
@@ -92,10 +85,10 @@ impl AoCDay for Day10 {
         (None, None)
     }
     fn part1(&self, input: &str) -> Result<String, ErrorWrapper> {
-        Ok(BEST.1.to_string())
+        Ok(best_visibility(&parse_input(input)).1.to_string())
     }
     fn part2(&self, input: &str) -> Result<String, ErrorWrapper> {
-        let mut objects = POINTS.clone();
+        let mut objects = parse_input(input);
         // Temporary
         let laser = Point { x: 26, y: 36 };
         objects.remove(objects.iter().position(|r| r == &laser).unwrap());
